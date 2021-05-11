@@ -59,10 +59,10 @@ class OrderListAdapter(val context: Context?) : RecyclerView.Adapter<OrderListAd
             // 가게
             binding.stores.removeAllViewsInLayout()
             if (order.stores!!.size >= 1) {
-                for (i in 0..order.stores.size - 1) {
+                for (i in 0..order.stores!!.size - 1) {
                     val view = ListStoreView(context)
                     view.store_num_string.setText("가게 " + (i + 1) + " : ")
-                    view.store_name_string.setText(order.stores[i].place.placeName)
+                    view.store_name_string.setText(order.stores!![i].place.placeName)
                     binding.stores.addView(view)
                 }
             }
@@ -82,7 +82,7 @@ class OrderListAdapter(val context: Context?) : RecyclerView.Adapter<OrderListAd
             var totalItemPrice = 0
             var isPickUpDone = true
             val decimalformat = DecimalFormat("#,###")
-            for (store in order.stores) {
+            for (store in order.stores!!) {
                 if (store.cost != null) {
                     totalItemPrice += store.cost!!
                 } else {

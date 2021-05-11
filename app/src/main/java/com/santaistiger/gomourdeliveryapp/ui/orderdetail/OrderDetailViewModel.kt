@@ -60,19 +60,21 @@ class OrderDetailViewModel : ViewModel() {
 
     // Order 객체의 정보를 viewModel의 변수에 저장
     private fun bindingOrder() {
-        for (store in order.value!!.stores) { storeList.add(store) }
+        for (store in order.value!!.stores!!) { storeList.add(store) }
         destination.set(order.value!!.destination)
         message.set(order.value!!.message)
-        price.set(order.value!!.deliveryCharge)
+        price.set(order.value!!.deliveryCharge!!)
     }
 
     // total 비용 계산
     fun getTotal() {
         var total = order.value!!.deliveryCharge
-        for (store in order.value!!.stores) {
-            if (store.cost != null) total += store.cost!!
+        for (store in order.value!!.stores!!) {
+            if (total != null) {
+                if (store.cost != null) total += store.cost!!
+            }
         }
-        price.set(total)
+        price.set(total!!)
     }
 
     fun updateOrder() {

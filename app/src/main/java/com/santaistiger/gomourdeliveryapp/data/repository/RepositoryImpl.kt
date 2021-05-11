@@ -11,6 +11,6 @@ object RepositoryImpl : Repository {
     }
 
     override fun updateOrder(order: Order) {
-        RealtimeDatabase.updateOrder(order.orderId, order)
+        RealtimeDatabase.updateOrder(order.orderId!!, order)
     }
 }

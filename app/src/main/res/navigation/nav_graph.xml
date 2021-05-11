@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_host"
-    app:startDestination="@id/orderDetailFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_host"
+    app:startDestination="@id/orderListFragment">
 
     <fragment
         android:id="@+id/orderDetailFragment"
         android:name="com.santaistiger.gomourdeliveryapp.ui.orderdetail.OrderDetailFragment"
-        android:label="OrderDetailFragment" />
+        android:label="OrderDetailFragment" >
+        <argument
+            android:name="orderId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderListFragment"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.orderlist.OrderListFragment"
+        android:label="fragment_order_list"
+        tools:layout="@layout/fragment_order_list" >
+        <action
+            android:id="@+id/action_orderListFragment_to_orderDetailFragment"
+            app:destination="@id/orderDetailFragment" />
+    </fragment>
 </navigation>
