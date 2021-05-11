@@ -1,11 +1,12 @@
 package com.santaistiger.gomourdeliveryapp.data.model
 
 data class DeliveryMan(
-    val email: String,
-    val password: String,
-    val name: String,
-    val phone: String,
-    val uid: String,
-    val accountInfo: AccountInfo
+    val email: String? = null,
+    val password: String? = null,
+    val name: String? = null,
+    val phone: String?= null,
+    var uid: String? = null,
+    val accountInfo: AccountInfo? = null,
+    var isCertified: Boolean = false
 
 )

@@ -1,5 +1,8 @@
 package com.santaistiger.gomourdeliveryapp.data.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
 
 /**
  * 주문 요청에 대한 정보를 갖는 데이터 클래스
@@ -13,12 +16,13 @@ package com.santaistiger.gomourdeliveryapp.data.model
  * @property message 배송 메시지
  * @property orderDate 주문 시간. 주문 요청 객체가 생성된 시간
  */
+@Parcelize
 data class OrderRequest(
-        val customerUid: String,
+        val customerUid: String? =null,
         val stores: ArrayList<Store>? = null,
         val deliveryCharge: Int? = null,
-        val destination: Place,
+        val destination: Place? = null,
         val message: String? = null,
         val orderDate: Long = System.currentTimeMillis(),
         val orderId: String = "$orderDate$customerUid"
-)
+):Parcelable

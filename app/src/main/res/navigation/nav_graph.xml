@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_host"
-    app:startDestination="@id/orderListFragment">
+    app:startDestination="@id/loadingFragment">
 
     <fragment
         android:id="@+id/orderDetailFragment"
@@ -21,5 +21,43 @@
         <action
             android:id="@+id/action_orderListFragment_to_orderDetailFragment"
             app:destination="@id/orderDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.loading.LoadingFragment"
+        android:label="LoadingFragment" >
+        <action
+            android:id="@+id/action_loadingFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_loadingFragment_to_orderListFragment"
+            app:destination="@id/orderListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.login.LoginFragment"
+        android:label="LoginFragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_joinFragment"
+            app:destination="@id/joinFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_orderListFragment"
+            app:destination="@id/orderListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/joinFragment"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.join.JoinFragment"
+        android:label="JoinFragment" >
+        <action
+            android:id="@+id/action_joinFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/modifyUserInfoFragment2"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.modifyuserinfo.ModifyUserInfoFragment"
+        android:label="ModifyUserInfoFragment" >
+        <action
+            android:id="@+id/action_modifyUserInfoFragment2_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
 </navigation>
