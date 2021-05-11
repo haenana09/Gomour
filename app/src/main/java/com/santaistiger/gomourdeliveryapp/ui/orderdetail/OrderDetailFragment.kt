@@ -9,10 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentOrderDetailBinding
+import kotlinx.android.synthetic.main.activity_base.*
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
@@ -32,6 +34,8 @@ class OrderDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        setToolbar()
+
         init(inflater, container)
         initKakaoMap()
         addOrderObserver()
@@ -41,6 +45,14 @@ class OrderDetailFragment : Fragment() {
         viewModel.getOrderDetail(TEST_ORDER_ID)
 
         return binding.root
+    }
+
+    private fun setToolbar() {
+        requireActivity().apply {
+            toolbar.visibility = View.VISIBLE     // 툴바 보이도록 설정
+            toolbar_title.setText("주문 조회")     // 툴바 타이틀 변경
+            drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)  // 스와이프 활성화
+        }
     }
 
     private fun addTextBtnObserver() {
@@ -138,7 +150,7 @@ class OrderDetailFragment : Fragment() {
         viewModel.order.observe(viewLifecycleOwner, { order ->
             // POI가 없으면 생성
             if (mapView.poiItems.isEmpty()) {
-                for (store in order.stores) {
+                for (store in order?.stores!!) {
                     MapPOIItem().apply {
                         itemName = store.place.placeName
                         mapPoint = MapPoint.mapPointWithGeoCoord(
@@ -152,11 +164,14 @@ class OrderDetailFragment : Fragment() {
                     }
                 }
                 MapPOIItem().apply {
-                    itemName = order.destination.placeName
-                    mapPoint = MapPoint.mapPointWithGeoCoord(
-                        order.destination.latitude!!,
-                        order.destination.longitude!!
-                    )
+                    if (order != null) {
+                        itemName = order!!.destination!!.placeName!!
+                            mapPoint = MapPoint.mapPointWithGeoCoord(
+                            order.destination!!.latitude!!,
+                            order.destination!!.longitude!!
+                        )
+                    }
+
                     markerType = MapPOIItem.MarkerType.RedPin
                     selectedMarkerType = MapPOIItem.MarkerType.BluePin
                     userObject = order.destination
