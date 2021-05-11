@@ -12,11 +12,11 @@ data class Place(
      val roadAddressName: String? = null,    // 도로명 주소
 ) : Parcelable {
 
-     fun getDisplayName(): String? {
-          if (!roadAddressName.isNullOrBlank() && !placeName.isNullOrBlank()) {
-               return "$roadAddressName ($placeName)"
-          }
-          return null
-     }
+    fun getDisplayName(): String? {
+        if (!roadAddressName.isNullOrBlank() && !placeName.isNullOrBlank()) {
+            return "$roadAddressName ($placeName)"
+        }
+        return null
+    }
 }
 
