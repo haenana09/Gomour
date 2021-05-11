@@ -35,8 +35,6 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // realtime db에 있는 order_request 테이블에 접근
     val myRef = databaseReference.child("order_request")
 
-
-
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,18 +69,22 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         AutoPermissions.loadAllPermissions(this, 1)
 
         setSupportActionBar(toolbar)    // 툴바를 액티비티의 앱바로 지정
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)   // 툴바 홈버튼 활성화
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.hamburger_btn)     // 홈버튼 이미지 변경
-        supportActionBar?.setDisplayShowTitleEnabled(false)     // 툴바에 앱 타이틀 보이지 않도록 설정
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)   // 툴바 홈버튼 활성화
+            setHomeAsUpIndicator(R.drawable.hamburger_btn)     // 홈버튼 이미지 변경
+            setDisplayShowTitleEnabled(false)     // 툴바에 앱 타이틀 보이지 않도록 설정
+        }
 
         // navigation 리스너 설정
         navigation_view.setNavigationItemSelectedListener(this)
 
         // 네비게이션 드로어 헤더 텍스트뷰 값 변경
         val header = navigation_view.getHeaderView(0)
-        header.user_name_string.setText("강단국")
-        header.user_phone_num_string.setText("010-1234-5678")
-        header.user_email_string.setText("32181234@dankook.ac.kr")
+        header.apply {
+            user_name_string.setText("강단국")
+            user_phone_num_string.setText("010-1234-5678")
+            user_email_string.setText("32181234@dankook.ac.kr")
+        }
 
         // 주문 받기 스위치 클릭 설정
         val item = navigation_view.menu.findItem(R.id.getOrderStatus)
@@ -102,13 +104,13 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
     }
 
-    // 메뉴 클릭 시 동작 정의
+    // 네비게이션 드로어 메뉴 클릭 시 동작 정의
     @SuppressLint("RestrictedApi")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val navController = nav_host_fragment.findNavController()
 
-        // 회원 정보 변경 이외의 메뉴 클릭 시 백스택 제거하여 취소 버튼 누르면 바로 앱 종료되도록
-        if (item.itemId != R.id.modifyUserInfoFragment) {
+        // 주문 받기, 회원 정보 변경 이외의 메뉴 클릭 시 백스택 제거하여 취소 버튼 누르면 바로 앱 종료되도록
+        if (item.itemId != R.id.modifyUserInfoFragment && item.itemId != R.id.getOrderStatus) {
             for (i in 1..navController.backStack.count()) {
                 navController.popBackStack()
             }
@@ -123,8 +125,6 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             // 로그아웃 클릭 시
             R.id.logout -> {
-                // 로그아웃 실행
-
                 // 현재 사용자 가져와서 로그아웃
                 var auth = Firebase.auth
                 auth?.signOut()
