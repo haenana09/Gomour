@@ -105,6 +105,7 @@ class ModifyUserInfoFragment: Fragment() {
     private fun modifyUser(){
         val currentUser = auth?.currentUser
         // Add a new document with a generated ID
+        // Add a new document with a generated ID
 
         val password = binding.passwordModify.text.toString()
         val phone = binding.phoneModify.text.toString()
@@ -137,7 +138,7 @@ class ModifyUserInfoFragment: Fragment() {
 
         }
         else{
-            findNavController().navigate(R.id.action_modifyUserInfoFragment2_to_loginFragment)
+            findNavController().navigate(R.id.action_modifyUserInfoFragment_to_loginFragment)
 
         }
     }
@@ -215,12 +216,8 @@ class ModifyUserInfoFragment: Fragment() {
                 editor.clear()
                 editor.commit()
 
-                findNavController().navigate(R.id.action_modifyUserInfoFragment2_to_loginFragment)
-
+                findNavController().navigate(R.id.action_modifyUserInfoFragment_to_loginFragment)
             }
             .addOnFailureListener { Toast.makeText(context,"탈퇴 실패", Toast.LENGTH_LONG).show() }
     }
-
-
-
 }

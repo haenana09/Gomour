@@ -53,11 +53,11 @@
             app:destination="@id/loginFragment" />
     </fragment>
     <fragment
-        android:id="@+id/modifyUserInfoFragment2"
+        android:id="@+id/modifyUserInfoFragment"
         android:name="com.santaistiger.gomourdeliveryapp.ui.modifyuserinfo.ModifyUserInfoFragment"
         android:label="ModifyUserInfoFragment" >
         <action
-            android:id="@+id/action_modifyUserInfoFragment2_to_loginFragment"
+            android:id="@+id/action_modifyUserInfoFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
 </navigation>
