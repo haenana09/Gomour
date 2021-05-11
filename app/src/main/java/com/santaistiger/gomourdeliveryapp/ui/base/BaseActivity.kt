@@ -1,26 +1,71 @@
 package com.santaistiger.gomourdeliveryapp.ui.base
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.CompoundButton
+import android.widget.EditText
 import android.widget.Switch
 import androidx.core.view.GravityCompat
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.pedro.library.AutoPermissions
 import com.santaistiger.gomourdeliveryapp.R
+import com.santaistiger.gomourdeliveryapp.data.model.Order
+import com.santaistiger.gomourdeliveryapp.data.model.OrderRequest
+import com.santaistiger.gomourdeliveryapp.ui.orderrequest.OrderRequestFragment
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.nav_header.view.*
 
 class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private val TAG = "BaseActivity"
+    val database = Firebase.database
+    val databaseReference: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
+
+    // realtime db에 있는 order_request 테이블에 접근
+    val myRef = databaseReference.child("order_request")
+
+
+
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
+
+        val childEventListener = object: ChildEventListener {
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+
+                val request: OrderRequest? = snapshot.getValue(OrderRequest::class.java)
+                if (request != null) {
+                    sendValue(request)
+                }
+
+            }
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+            }
+        }
 
         // Auto permission
         AutoPermissions.loadAllPermissions(this, 1)
@@ -47,9 +92,11 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (isChecked) {
                     Log.d(TAG, "주문 받기 on")
                     // 주문 받도록 설정
+                    myRef.addChildEventListener(childEventListener)
                 } else {
                     Log.d(TAG, "주문 받기 off")
                     // 주문 더이상 받지 않도록 설정
+                    myRef.removeEventListener(childEventListener)
                 }
             }
         })
@@ -72,14 +119,24 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.orderListFragment -> navController.navigate(R.id.orderListFragment)
 
             // 회원 정보 변경 클릭 시
-//            R.id.modifyUserInfoFragment -> navController.navigate(R.id.modifyUserInfoFragment)
+            R.id.modifyUserInfoFragment -> navController.navigate(R.id.modifyUserInfoFragment)
 
             // 로그아웃 클릭 시
             R.id.logout -> {
                 // 로그아웃 실행
 
+                // 현재 사용자 가져와서 로그아웃
+                var auth = Firebase.auth
+                auth?.signOut()
+
+                // 자동로그인 삭제
+                val auto = getSharedPreferences("auto", Context.MODE_PRIVATE)
+                val editor: SharedPreferences.Editor = auto.edit()
+                editor.clear()
+                editor.commit()
+
                 // 로그인 화면으로 이동
-//                navController.navigate(R.id.loginFragment)
+                navController.navigate(R.id.loginFragment)
             }
         }
 
@@ -108,4 +165,81 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             super.onBackPressed()
         }
     }
+
+    private fun sendValue(order_request: OrderRequest){
+        Log.d("mimi","sendValue")
+
+        val bundle = Bundle()
+        var stores_count = order_request.stores?.count()
+
+        bundle.putParcelable("order_request객체",order_request)
+
+        //Custom Dialog -  주문 팝업창 띄우기
+        var myDialogFragment: OrderRequestFragment = OrderRequestFragment()
+        myDialogFragment.arguments = bundle
+        val fragmentManager = this?.supportFragmentManager
+
+        Log.d("mimi",bundle.toString())
+        fragmentManager?.let { fragmentManager ->
+            myDialogFragment.show(
+                fragmentManager, "search filter"
+            )
+        }
+
+        val builder = AlertDialog.Builder(this)
+        builder.setView(layoutInflater.inflate(R.layout.dialog_deliverytime,null))
+        //배달시간입력팝업창을 위한 리스너
+        var listener = DialogInterface.OnClickListener{ p0, _->
+            val dialog = p0 as AlertDialog
+            var deliverytime = dialog.findViewById<EditText>(R.id.editText).text.toString().toLong()
+            orderCreate(order_request,deliverytime)
+            onDestroy()
+            val bundle = Bundle()
+            bundle.putString("orderId", order_request.orderId)
+            //  order_request 테이블에서 삭제
+            order_request.orderId?.let { myRef.child(it).removeValue() }
+            myDialogFragment.dismiss()
+            //https://stackoverflow.com/questions/9201701/android-how-to-dismiss-all-dialogs-in-onpause/12978259
+            /*if (fragmentManager != null) {
+                dismissAllDialogs(fragmentManager)
+            }*/
+
+        }
+
+
+        //배달시간 입력하는 팝업창
+        myDialogFragment.setOnClickedListener(object: OrderRequestFragment.ButtonClickListener{
+            override fun OnClicked(myName: String) {
+                builder.setView(R.layout.dialog_deliverytime)
+                    .setPositiveButton("확인", listener)
+                    .show()
+            }
+
+        })
+    }
+
+
+    private fun orderCreate(orderRequest: OrderRequest, deliverytime: Long){
+        val order = orderRequest.stores?.let {
+            Order(
+                customerUid = orderRequest.customerUid,
+                deliveryManUid = "123456789",
+                orderId = orderRequest.orderId,
+                stores = it,
+                deliveryCharge = orderRequest.deliveryCharge,
+                destination = orderRequest.destination,
+                message = orderRequest.message,
+                orderDate = orderRequest.orderDate,
+                deliveryTime = deliverytime,
+                isCompleted = false
+            )
+        }
+
+        orderRequest.orderId?.let { databaseReference.child("order").child(it).setValue(order) }
+
+    }
+
+
+
+
 }

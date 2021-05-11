@@ -10,7 +10,7 @@ data class Order(
         val orderId: String? = null,
         val customerUid: String? = null,
         val deliveryManUid: String? = null,
-        var stores: List<Store>? = null,
+        var stores: ArrayList<Store>? = null,
         val deliveryCharge: Int? = null,
         val destination: Place? = null,
         val message: String? = null,

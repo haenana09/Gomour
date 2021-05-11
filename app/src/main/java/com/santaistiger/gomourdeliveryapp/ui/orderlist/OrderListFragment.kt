@@ -25,9 +25,7 @@ class OrderListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        requireActivity().toolbar.visibility = View.VISIBLE     // 툴바 보이도록 설정
-        requireActivity().toolbar_title.setText("주문 목록")    // 툴바 타이틀 변경
-        requireActivity().drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)  // 스와이프 활성화
+        setToolbar()
 
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_order_list, container, false
@@ -44,5 +42,13 @@ class OrderListFragment : Fragment() {
         binding.orderList.adapter = adapter
 
         return binding.root
+    }
+
+    private fun setToolbar() {
+        requireActivity().apply {
+            toolbar.visibility = View.VISIBLE     // 툴바 보이도록 설정
+            toolbar_title.setText("주문 목록")     // 툴바 타이틀 변경
+            drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)  // 스와이프 활성화
+        }
     }
 }
