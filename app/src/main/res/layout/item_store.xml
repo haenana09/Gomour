@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <data>
-        <variable
-            name="item"
-            type="com.santaistiger.gomourdeliveryapp.data.model.Store" />
-    </data>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -21,8 +17,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingHorizontal="5dp">
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/iv_stopover"
@@ -30,43 +25,44 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:padding="8dp"
-                app:srcCompat="@drawable/store" />
+                app:srcCompat="@drawable/ic_launcher_background" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="6"
-                android:orientation="vertical"
-                android:paddingVertical="5dp" >
+                android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_store_address"
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tv_stopover_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ems="10"
                     android:textSize="14dp"
-                    android:text="@{item.place.getDisplayName}"
-                    android:layout_marginBottom="5dp"
-                    tools:text="가게 도로명 주소 (가게명)" />
+                    tools:text="경유지" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/et_menu"
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/tv_menu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#00000000"
+                    android:ems="10"
                     android:textSize="14dp"
-                    android:text="@{item.menu}"
-                    tools:text="메뉴 메뉴 메뉴 메뉴 메뉴 \n메뉴 메뉴 메뉴 메뉴" />
+                    tools:text="상품명" />
+
             </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_input_price"
+            <ImageButton
+                android:id="@+id/ib_delete_item"
                 android:layout_width="0dp"
-                android:layout_weight="1.5"
                 android:layout_height="match_parent"
-                android:hint="가격\n입력"
-                android:text="@{item.cost.toString()}"/>
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:paddingHorizontal="10dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_launcher_background" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-</layout>
+</LinearLayout>
