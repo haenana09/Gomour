@@ -1,7 +1,18 @@
 <resources>
-    <string name="app_name">곰아워 기사용</string>
-    <string name="title_do_order_fragment">주문 조회</string>
-    <string name="address_do_order_fragment">출발지 및 목적지</string>
-    <string name="message_do_order_fragment">배송 메시지</string>
-    <string name="price_do_order_fragment">비용</string>
+    <string name="app_name">GomourDeliveryApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- 주문 목록 화면 관련 resource -->
+    <string name="title_order_list_fragment">주문 목록</string>
+    <string name="order_time_item_order_info">주문 시각</string>
+    <string name="delivery_status_item_order_info">배달 상태</string>
+    <string name="price_item_order_info">금액</string>
+    <string name="empty_order_list_fragment">배달 내역이 없습니다.</string>
+
+    <!-- 네비게이션 드로어 관련 resource -->
+    <string name="order_list_navdrawer_menu">주문 목록</string>
+    <string name="modify_user_info_navdrawer_menu">회원 정보 변경</string>
+    <string name="logout_navdrawer_menu">로그아웃</string>
+    <string name="get_order_status_navdrawer_menu">주문 받기</string>
 </resources>
