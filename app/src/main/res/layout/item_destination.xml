@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="item"
+            type="com.santaistiger.gomourdeliveryapp.data.model.Place" />
+        <variable
+            name="viewModel"
+            type="com.santaistiger.gomourdeliveryapp.ui.orderdetail.OrderDetailViewModel" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="3dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="5dp"
+            android:gravity="center_vertical"
+            android:layout_marginVertical="5dp" >
+
+            <ImageView
+                android:id="@+id/iv_stopover"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:padding="8dp"
+                app:srcCompat="@drawable/store" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_store_address"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="6"
+                android:textSize="14dp"
+                android:gravity="center_vertical"
+                android:text="@{item.getDisplayName}"
+                tools:text="도착주소주소\n도착 주소를 주소" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_complete"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:layout_height="wrap_content"
+                android:hint="픽업\n완료"
+                android:onClick="@{() -> viewModel.onCompleteBtnClick()}"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
