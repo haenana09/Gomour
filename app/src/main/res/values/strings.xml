@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">곰아워 기사용</string>
+    <string name="title_do_order_fragment">주문 조회</string>
+    <string name="address_do_order_fragment">출발지 및 목적지</string>
+    <string name="message_do_order_fragment">배송 메시지</string>
+    <string name="price_do_order_fragment">비용</string>
+</resources>
