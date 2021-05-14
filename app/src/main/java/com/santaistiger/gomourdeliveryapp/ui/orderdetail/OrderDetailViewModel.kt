@@ -1,9 +1,7 @@
 package com.santaistiger.gomourdeliveryapp.ui.orderdetail
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -11,38 +9,24 @@ import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 val TAG = "OrderDetailViewModel"
 
-class OrderDetailViewModel : ViewModel() {
-    val order = MutableLiveData<Order>()
+class OrderDetailViewModel(orderId: String) : ViewModel() {
+    val order: MutableLiveData<Order> = liveData(Dispatchers.IO) {
+        emit(repository.getOrderDetail(orderId))
+    } as MutableLiveData<Order>
+
     val isPickupCompleteBtnClick = MutableLiveData<Boolean>()
     val isDeliveryCompleteBtnClick = MutableLiveData<Boolean>()
     val isCallBtnClick = MutableLiveData<Boolean>()
     val isTextBtnClick = MutableLiveData<Boolean>()
 
     private val repository: Repository = RepositoryImpl
-
-    fun getOrderDetail(orderId: String) {
-        viewModelScope.launch {
-            repository.getOrderDetail(orderId)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        if (snapshot.exists()) {
-                            Log.d(TAG, "$snapshot")
-                            snapshot.getValue(Order::class.java)?.let {
-                                order.value = it
-                            }
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        Log.d(TAG, "current order is not in realtime database")
-                    }
-                })
-        }
-    }
 
     private fun notifyOrderChange() {
         order.value = order.value
@@ -76,7 +60,6 @@ class OrderDetailViewModel : ViewModel() {
         repository.updateOrder(order.value!!)
     }
 
-
     fun onCallBtnClick() {
         isCallBtnClick.value = true
     }
@@ -93,4 +76,5 @@ class OrderDetailViewModel : ViewModel() {
         isTextBtnClick.value = false
     }
 
+    fun getCustomerUid() = order.value!!.customerUid!!
 }

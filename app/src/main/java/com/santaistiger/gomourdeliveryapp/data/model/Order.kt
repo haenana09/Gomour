@@ -20,5 +20,5 @@ data class Order(
         val orderDate: Long? = null,
         var deliveryTime: Long? = null,
         var status: Status = Status.PREPARING
-) : BaseObservable()
+)
 

@@ -12,26 +12,33 @@ import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.navArgs
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.Place
 import com.santaistiger.gomourdeliveryapp.data.model.Status
+import com.santaistiger.gomourdeliveryapp.data.repository.Repository
+import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentOrderDetailBinding
 import kotlinx.android.synthetic.main.activity_base.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
 private val DANKOOKUNIV_LOCATION =
     MapPoint.mapPointWithGeoCoord(37.32224683322665, 127.12683613068711)
-const val TEST_ORDER_ID = "1620486408728a1s2d3f9"
 
 class OrderDetailFragment : Fragment() {
     private lateinit var binding: FragmentOrderDetailBinding
     private lateinit var viewModel: OrderDetailViewModel
     private lateinit var mapView: MapView
+    private val repository: Repository = RepositoryImpl
     val TAG = "OrderDetailFragment"
 
     override fun onCreateView(
@@ -41,7 +48,6 @@ class OrderDetailFragment : Fragment() {
 
         init(inflater, container)
         setObserver()
-        getOrderDetail()
 
         return binding.root
     }
@@ -56,7 +62,10 @@ class OrderDetailFragment : Fragment() {
             container,
             false
         )
-        viewModel = ViewModelProvider(this).get(OrderDetailViewModel::class.java)
+
+        val orderId = OrderDetailFragmentArgs.fromBundle(requireArguments()).orderId
+        viewModel = ViewModelProvider(this, OrderDetailViewModelFactory(orderId))
+            .get(OrderDetailViewModel::class.java)
         binding.viewModel = viewModel
         binding.cvDestination.binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -71,12 +80,6 @@ class OrderDetailFragment : Fragment() {
         setDeliveryCompleteBtnObserver()
         setCallBtnObserver()
         setTextBtnObserver()
-    }
-
-    private fun getOrderDetail() {
-        val orderId =
-            OrderDetailFragmentArgs.fromBundle(requireArguments()).orderId
-        viewModel.getOrderDetail(orderId)
     }
 
     private fun setToolbar() {
@@ -103,16 +106,20 @@ class OrderDetailFragment : Fragment() {
      * 다이얼로그를 띄우고, 확인 버튼을 누르면 문자앱으로 이동
      */
     private fun setTextBtnObserver() {
-        viewModel.isTextBtnClick.observe(viewLifecycleOwner) { clicked ->
+        viewModel.isTextBtnClick.observe(viewLifecycleOwner, Observer { clicked ->
             if (clicked) {
                 AlertDialog.Builder(requireContext())
                     .setMessage("주문자에게 문자를 전송하시겠습니까?")
                     .setPositiveButton("확인") { _, _ ->
-                        startActivity(
-                            Intent(Intent.ACTION_SENDTO)
-                                .setData(Uri.parse("smsto:01035575003"))
-                                .putExtra("sms_body", "곰아워 배달기사입니다.")
-                        )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val customerUid = viewModel.getCustomerUid()
+                            val deferredPhone = async { repository.getCustomerPhone(customerUid) }
+                            startActivity(
+                                Intent(Intent.ACTION_SENDTO)
+                                    .setData(Uri.parse("smsto:${deferredPhone.await()}"))
+                                    .putExtra("sms_body", "곰아워 배달기사입니다.")
+                            )
+                        }
                         viewModel.doneTextBtnClick()
                     }
                     .setNegativeButton("취소") { _, _ ->
@@ -121,7 +128,7 @@ class OrderDetailFragment : Fragment() {
                     .create()
                     .show()
             }
-        }
+        })
     }
 
     /**
@@ -129,15 +136,18 @@ class OrderDetailFragment : Fragment() {
      * 다이얼로그를 띄우고, 확인 버튼을 누르면 문자앱으로 이동
      */
     private fun setCallBtnObserver() {
-        viewModel.isCallBtnClick.observe(viewLifecycleOwner) { clicked ->
+        viewModel.isCallBtnClick.observe(viewLifecycleOwner, Observer { clicked ->
             if (clicked) {
                 AlertDialog.Builder(requireContext())
                     .setMessage("주문자에게 전화를 거시겠습니까?")
                     .setPositiveButton("확인") { _, _ ->
-                        startActivity(
-                            Intent(Intent.ACTION_DIAL)
-                                .setData(Uri.parse("tel:01035575003"))
-                        )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val customerUid = viewModel.getCustomerUid()
+                            val deferredPhone = async { repository.getCustomerPhone(customerUid) }
+                            startActivity(
+                                Intent(Intent.ACTION_DIAL).setData(Uri.parse("tel:${deferredPhone.await()}"))
+                            )
+                        }
                         viewModel.doneCallBtnClick()
                     }
                     .setNegativeButton("취소") { _, _ ->
@@ -146,11 +156,11 @@ class OrderDetailFragment : Fragment() {
                     .create()
                     .show()
             }
-        }
+        })
     }
 
     private fun setPickupCompleteBtnObserver() {
-        viewModel.isPickupCompleteBtnClick.observe(viewLifecycleOwner, { clicked ->
+        viewModel.isPickupCompleteBtnClick.observe(viewLifecycleOwner, Observer { clicked ->
             if (clicked) {
                 AlertDialog.Builder(requireContext())
                     .setMessage("픽업 완료를 처리하시겠습니까?\n가격은 다시 바꿀 수 없습니다.")
@@ -172,7 +182,7 @@ class OrderDetailFragment : Fragment() {
     }
 
     private fun setDeliveryCompleteBtnObserver() {
-        viewModel.isDeliveryCompleteBtnClick.observe(viewLifecycleOwner, { clicked ->
+        viewModel.isDeliveryCompleteBtnClick.observe(viewLifecycleOwner, Observer { clicked ->
             if (clicked) {
                 AlertDialog.Builder(requireContext())
                     .setMessage("배달 완료를 처리하시겠습니까?")
@@ -197,7 +207,7 @@ class OrderDetailFragment : Fragment() {
      * 가게와 목적지에 pin을 찍는 함수
      */
     private fun setOrderObserver() {
-        viewModel.order.observe(viewLifecycleOwner, { order ->
+        viewModel.order.observe(viewLifecycleOwner, Observer { order ->
             // POI가 없으면 POI 생성
             if (mapView.poiItems.isEmpty()) {
                 for (store in order?.stores!!) {
@@ -215,14 +225,6 @@ class OrderDetailFragment : Fragment() {
                     )
                 }
             }
-
-            // status가 Status.PREPARING이 아니면 가격 설정 못하게
-            Log.i(TAG, "order.status = ${order?.status}")
-            if (order.status != Status.PREPARING) {
-                for (child in binding.rvStore.children) {
-                    Log.i(TAG, child.toString())
-                }
-            }
         })
     }
 
@@ -231,7 +233,6 @@ class OrderDetailFragment : Fragment() {
         marker: MapPOIItem.MarkerType,
         selectedMarker: MapPOIItem.MarkerType
     ) {
-
         MapPOIItem().apply {
             itemName = place.placeName
             mapPoint = MapPoint.mapPointWithGeoCoord(
@@ -243,6 +244,5 @@ class OrderDetailFragment : Fragment() {
             userObject = place
             mapView.addPOIItem(this)
         }
-
     }
 }
