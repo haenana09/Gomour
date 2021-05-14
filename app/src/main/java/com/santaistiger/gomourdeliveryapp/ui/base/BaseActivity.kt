@@ -13,6 +13,7 @@ import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.Switch
 import androidx.core.view.GravityCompat
+import androidx.databinding.ObservableField
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth

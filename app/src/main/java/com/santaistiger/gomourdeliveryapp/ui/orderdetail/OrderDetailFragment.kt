@@ -3,16 +3,20 @@ package com.santaistiger.gomourdeliveryapp.ui.orderdetail
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.santaistiger.gomourdeliveryapp.R
+import com.santaistiger.gomourdeliveryapp.data.model.Place
+import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentOrderDetailBinding
 import kotlinx.android.synthetic.main.activity_base.*
 import net.daum.mf.map.api.MapPOIItem
@@ -66,7 +70,19 @@ class OrderDetailFragment : Fragment() {
         setDeliveryCompleteBtnObserver()
         setCallBtnObserver()
         setTextBtnObserver()
+//        setModifiableCostObserver()
     }
+
+//    private fun setModifiableCostObserver() {
+//        viewModel.isModifiableCost.observe(viewLifecycleOwner) { modifiable ->
+//            if (!modifiable) {
+//                Log.i(
+//                    TAG,
+//                    binding.rvStore.findViewHolderForAdapterPosition(0).itemView.view
+//                )
+//            }
+//        }
+//    }
 
     private fun getOrderDetail() {
         viewModel.getOrderDetail(TEST_ORDER_ID)
@@ -101,10 +117,11 @@ class OrderDetailFragment : Fragment() {
                 AlertDialog.Builder(requireContext())
                     .setMessage("주문자에게 문자를 전송하시겠습니까?")
                     .setPositiveButton("확인") { _, _ ->
-                        var intent = Intent(Intent.ACTION_SENDTO)
-                        intent.data = Uri.parse("smsto:01035575003")
-                        intent.putExtra("sms_body", "곰아워 배달원입니다.")
-                        startActivity(intent)
+                        startActivity(
+                            Intent(Intent.ACTION_SENDTO)
+                                .setData(Uri.parse("smsto:01035575003"))
+                                .putExtra("sms_body", "곰아워 배달기사입니다.")
+                        )
                         viewModel.doneTextBtnClick()
                     }
                     .setNegativeButton("취소") { _, _ ->
@@ -126,9 +143,10 @@ class OrderDetailFragment : Fragment() {
                 AlertDialog.Builder(requireContext())
                     .setMessage("주문자에게 전화를 거시겠습니까?")
                     .setPositiveButton("확인") { _, _ ->
-                        var intent = Intent(Intent.ACTION_DIAL)
-                        intent.data = Uri.parse("tel:01035575003")
-                        startActivity(intent)
+                        startActivity(
+                            Intent(Intent.ACTION_DIAL)
+                                .setData(Uri.parse("tel:01035575003"))
+                        )
                         viewModel.doneCallBtnClick()
                     }
                     .setNegativeButton("취소") { _, _ ->
@@ -189,36 +207,51 @@ class OrderDetailFragment : Fragment() {
      */
     private fun setOrderObserver() {
         viewModel.order.observe(viewLifecycleOwner, { order ->
-            if (mapView.poiItems.isEmpty()) { // POI가 없으면 생성
-                // 가게
+            // POI가 없으면 POI 생성
+            if (mapView.poiItems.isEmpty()) {
                 for (store in order?.stores!!) {
-                    MapPOIItem().apply {
-                        itemName = store.place.placeName
-                        mapPoint = MapPoint.mapPointWithGeoCoord(
-                            store.place.latitude!!,
-                            store.place.longitude!!
-                        )
-                        markerType = MapPOIItem.MarkerType.BluePin
-                        selectedMarkerType = MapPOIItem.MarkerType.RedPin
-                        userObject = store.place
-                        mapView.addPOIItem(this)
-                    }
+                    setPOIItem(
+                        store.place,
+                        MapPOIItem.MarkerType.BluePin,
+                        MapPOIItem.MarkerType.RedPin
+                    )
                 }
-                // 목적지
-                MapPOIItem().apply {
-                    if (order != null) {
-                        itemName = order!!.destination!!.placeName!!
-                        mapPoint = MapPoint.mapPointWithGeoCoord(
-                            order.destination!!.latitude!!,
-                            order.destination!!.longitude!!
-                        )
-                    }
-                    markerType = MapPOIItem.MarkerType.RedPin
-                    selectedMarkerType = MapPOIItem.MarkerType.BluePin
-                    userObject = order.destination
-                    mapView.addPOIItem(this)
+                order.destination?.let {
+                    setPOIItem(
+                        it,
+                        MapPOIItem.MarkerType.RedPin,
+                        MapPOIItem.MarkerType.BluePin
+                    )
+                }
+            }
+
+            // status가 Status.PREPARING이 아니면 가격 설정 못하게
+            Log.i(TAG, "order.status = ${order?.status}")
+            if (order.status != Status.PREPARING) {
+                for (child in binding.rvStore.children) {
+                    Log.i(TAG, child.toString())
                 }
             }
         })
+    }
+
+    private fun setPOIItem(
+        place: Place,
+        marker: MapPOIItem.MarkerType,
+        selectedMarker: MapPOIItem.MarkerType
+    ) {
+
+        MapPOIItem().apply {
+            itemName = place.placeName
+            mapPoint = MapPoint.mapPointWithGeoCoord(
+                place.latitude!!,
+                place.longitude!!
+            )
+            markerType = marker
+            selectedMarkerType = selectedMarker
+            userObject = place
+            mapView.addPOIItem(this)
+        }
+
     }
 }

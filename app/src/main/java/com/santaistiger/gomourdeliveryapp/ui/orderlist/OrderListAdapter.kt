@@ -52,7 +52,7 @@ class OrderListAdapter(val context: Context?) : RecyclerView.Adapter<OrderListAd
 
             // 배달 상태
             binding.orderStatusString.text = when (order.status) {
-                Status.PREPARING -> "픽업 중"
+                Status.PREPARING -> "상품 준비중"
                 Status.PICKUP_COMPLETE -> "픽업 완료"
                 Status.DELIVERY_COMPLETE -> "배달 완료"
             }

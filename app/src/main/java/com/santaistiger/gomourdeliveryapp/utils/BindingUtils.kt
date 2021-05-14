@@ -1,14 +1,15 @@
 package com.santaistiger.gomourdeliveryapp.utils
 
+import android.util.Log
+import android.widget.Button
 import android.widget.TextView
-import androidx.databinding.*
+import androidx.appcompat.widget.AppCompatButton
+import androidx.databinding.BindingAdapter
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.santaistiger.gomourdeliveryapp.data.model.Order
-import com.santaistiger.gomourdeliveryapp.data.model.Place
 import com.santaistiger.gomourdeliveryapp.data.model.Status
-import com.santaistiger.gomourdeliveryapp.data.model.Store
 import com.santaistiger.gomourdeliveryapp.ui.customview.DestinationView
 import com.santaistiger.gomourdeliveryapp.ui.customview.MessageView
 import com.santaistiger.gomourdeliveryapp.ui.customview.PriceView
@@ -18,34 +19,69 @@ import java.text.SimpleDateFormat
 val TAG = "BindingUtils"
 
 object BindingUtils {
+
     @BindingAdapter("bind_store_list")
     @JvmStatic
-    fun bindStoreList(recyclerView: RecyclerView, items: ObservableArrayList<Store>) {
-        if (recyclerView.adapter == null) {
-            recyclerView.layoutManager =
-                LinearLayoutManager(recyclerView.context)
-            recyclerView.adapter = StoreAdapter()
+    fun bindStoreList(recyclerView: RecyclerView, item: MutableLiveData<Order>) {
+        if (item.value != null) {
+            val order = item.value!!
+            val stores = order.stores
+
+            if (recyclerView.adapter == null) {
+                recyclerView.layoutManager =
+                    LinearLayoutManager(recyclerView.context)
+                recyclerView.adapter = StoreAdapter()
+            }
+            (recyclerView.adapter as StoreAdapter).items = stores ?: ArrayList()
+            recyclerView.adapter?.notifyDataSetChanged()
         }
-        (recyclerView.adapter as StoreAdapter).items = items
-        recyclerView.adapter?.notifyDataSetChanged()
     }
 
     @BindingAdapter("bind_destination")
     @JvmStatic
-    fun bindDestination(view: DestinationView, item: ObservableParcelable<Place>) {
-        view.binding.item = item.get()
+    fun bindDestination(view: DestinationView, item: MutableLiveData<Order>) {
+        if (item.value != null) {
+            val order = item.value!!
+            view.binding.item = order.destination
+
+            when (order.status) {
+                Status.PICKUP_COMPLETE -> {
+                    setUnClickable(view.binding.btnPickupComplete)
+                }
+
+                Status.DELIVERY_COMPLETE -> {
+                    setUnClickable(view.binding.btnPickupComplete)
+                    setUnClickable(view.binding.btnDeliveryComplete)
+                }
+            }
+        }
     }
+
+    private fun setUnClickable(btn: AppCompatButton) {
+        btn.isClickable = false
+        btn.text = btn.hint.toString()
+    }
+
 
     @BindingAdapter("bind_message")
     @JvmStatic
-    fun bindMessage(view: MessageView, item: ObservableField<String>) {
-        view.binding.message = item.get()
+    fun bindMessage(view: MessageView, item: MutableLiveData<Order>) {
+        if (item.value != null) {
+            view.binding.message = item.value!!.message
+        }
     }
 
     @BindingAdapter("bind_price")
     @JvmStatic
-    fun bindPrice(view: PriceView, item: ObservableInt) {
-        view.binding.price = item.get()
+    fun bindPrice(view: PriceView, item: MutableLiveData<Order>) {
+        if (item.value != null) {
+            val order = item.value!!
+            var price = order.deliveryCharge ?: 0
+            for (store in order.stores!!) {
+                price += store.cost ?: 0
+            }
+            view.binding.price = price
+        }
     }
 
     @BindingAdapter("bind_delivery_time")
@@ -54,10 +90,19 @@ object BindingUtils {
         if (item.value != null) {
             val order = item.value!!
             view.text = if (order.status == Status.DELIVERY_COMPLETE) {
-                SimpleDateFormat("yyyy-MM-dd hh:mm 도착").format(order.deliveryTime)
+                SimpleDateFormat("hh:mm 배달 완료").format(order.deliveryTime)
             } else {
-                SimpleDateFormat("yyyy-MM-dd hh:mm 도착 예정").format(order.deliveryTime)
+                SimpleDateFormat("hh:mm 배달 예정").format(order.deliveryTime)
             }
+        }
+    }
+
+    @BindingAdapter("bind_cost")
+    @JvmStatic
+    fun bindCost(view: Button, item: Int?) {
+        if (item != null) {
+            view.isClickable = false
+            view.text = item.toString()
         }
     }
 
