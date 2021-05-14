@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,12 +24,15 @@ import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentLoginBinding
 import kotlinx.android.synthetic.main.activity_base.*
+import kotlinx.android.synthetic.main.fragment_join.*
+
 
 class LoginFragment: Fragment(){
 
     private var auth: FirebaseAuth? = null
     private lateinit var binding: FragmentLoginBinding
     private lateinit var viewModel: LoginViewModel
+
 
 
 
@@ -80,6 +84,7 @@ class LoginFragment: Fragment(){
             val email = id + "@dankook.ac.kr"
             val password = binding.passwordLogin.text.toString()
             signIn(email,password)
+
         }
 
 
@@ -132,6 +137,7 @@ class LoginFragment: Fragment(){
                                     autoLogin.putString("password",password)
                                     autoLogin.commit()
                                     Toast.makeText(context,"commit 완료", Toast.LENGTH_LONG).show()
+
                                     findNavController().navigate(R.id.action_loginFragment_to_orderListFragment)
                                 }
                                 else{
@@ -156,10 +162,10 @@ class LoginFragment: Fragment(){
 
     }
 
+    private fun hideKeyboard() {
 
 
-
-
+    }
 
 
 
