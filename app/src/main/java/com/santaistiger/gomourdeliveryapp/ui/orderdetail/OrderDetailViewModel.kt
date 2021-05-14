@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.model.Place
+import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.data.model.Store
 import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
@@ -31,7 +32,8 @@ class OrderDetailViewModel : ViewModel() {
     var price = ObservableInt()
     var destination = ObservableParcelable<Place>()
 
-    var isCompleteBtnClick = MutableLiveData<Boolean>()
+    var isPickupCompleteBtnClick = MutableLiveData<Boolean>()
+    var isDeliveryCompleteBtnClick = MutableLiveData<Boolean>()
     var isCallBtnClick = MutableLiveData<Boolean>()
     var isTextBtnClick = MutableLiveData<Boolean>()
 
@@ -77,19 +79,34 @@ class OrderDetailViewModel : ViewModel() {
         price.set(total!!)
     }
 
-    fun updateOrder() {
+    fun donePickupCompleteBtnClick() {
+        isPickupCompleteBtnClick.value = false
+    }
+
+    fun completePickup() {
+        getTotal()
         val stores = ArrayList<Store>()
         stores.addAll(storeList)
         order.value!!.stores = stores
+        order.value!!.status = Status.PICKUP_COMPLETE
         repository.updateOrder(order.value!!)
     }
 
-    fun doneCompleteBtnClick() {
-        isCompleteBtnClick.value = false
+    fun completeDelivery() {
+        order.value!!.status = Status.DELIVERY_COMPLETE
+        repository.updateOrder(order.value!!)
     }
 
-    fun onCompleteBtnClick() {
-        isCompleteBtnClick.value = true
+    fun onPickupCompleteBtnClick() {
+        isPickupCompleteBtnClick.value = true
+    }
+
+    fun doneDeliveryCompleteBtnClick() {
+        isDeliveryCompleteBtnClick.value = false
+    }
+
+    fun onDeliveryCompleteBtnClick() {
+        isDeliveryCompleteBtnClick.value = true
     }
 
     fun onCallBtnClick() {

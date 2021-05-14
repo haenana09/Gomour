@@ -48,13 +48,28 @@
                 android:text="@{item.getDisplayName}"
                 tools:text="도착주소주소\n도착 주소를 주소" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_complete"
-                android:layout_width="0dp"
-                android:layout_weight="1.5"
+
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="픽업\n완료"
-                android:onClick="@{() -> viewModel.onCompleteBtnClick()}"/>
+                android:orientation="vertical">
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_pickup_complete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="0dp"
+                    android:hint="픽업 완료"
+                    android:onClick="@{() -> viewModel.onPickupCompleteBtnClick()}"/>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btn_delivery_complete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="배달 완료"
+                    android:onClick="@{() -> viewModel.onDeliveryCompleteBtnClick()}"/>
+            </LinearLayout>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

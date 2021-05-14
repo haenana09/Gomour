@@ -23,6 +23,7 @@ import com.pedro.library.AutoPermissions
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.model.OrderRequest
+import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.ui.orderrequest.OrderRequestFragment
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.nav_header.view.*
@@ -231,7 +232,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 message = orderRequest.message,
                 orderDate = orderRequest.orderDate,
                 deliveryTime = deliverytime,
-                isCompleted = false
+                status = Status.PREPARING
             )
         }
 
