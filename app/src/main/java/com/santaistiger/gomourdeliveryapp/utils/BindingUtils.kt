@@ -107,6 +107,5 @@ object BindingUtils {
             view.text = numberFormat.format(item)
         }
     }
-
 }
 

@@ -20,7 +20,7 @@ import java.lang.Exception
 
 private val TAG = "RealtimeDBApiService"
 
-object RealtimeDBApiService {
+object RealtimeDBApi {
     private var database: DatabaseReference = Firebase.database.reference
     private var orderTable = database.child("order")
 

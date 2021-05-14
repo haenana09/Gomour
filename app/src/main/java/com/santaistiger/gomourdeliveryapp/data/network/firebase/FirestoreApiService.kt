@@ -6,7 +6,7 @@ import com.santaistiger.gomourdeliveryapp.data.model.Customer
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 
-object FirestoreApiService {
+object FirestoreApi {
     private val database = Firebase.firestore
     private val customerTable = database.collection("customer")
     private val deliveryManTable = database.collection("deliveryMan")
