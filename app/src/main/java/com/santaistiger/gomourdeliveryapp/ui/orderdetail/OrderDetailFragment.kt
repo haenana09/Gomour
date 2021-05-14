@@ -14,6 +14,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.navArgs
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.Place
 import com.santaistiger.gomourdeliveryapp.data.model.Status
@@ -70,22 +71,12 @@ class OrderDetailFragment : Fragment() {
         setDeliveryCompleteBtnObserver()
         setCallBtnObserver()
         setTextBtnObserver()
-//        setModifiableCostObserver()
     }
 
-//    private fun setModifiableCostObserver() {
-//        viewModel.isModifiableCost.observe(viewLifecycleOwner) { modifiable ->
-//            if (!modifiable) {
-//                Log.i(
-//                    TAG,
-//                    binding.rvStore.findViewHolderForAdapterPosition(0).itemView.view
-//                )
-//            }
-//        }
-//    }
-
     private fun getOrderDetail() {
-        viewModel.getOrderDetail(TEST_ORDER_ID)
+        val orderId =
+            OrderDetailFragmentArgs.fromBundle(requireArguments()).orderId
+        viewModel.getOrderDetail(orderId)
     }
 
     private fun setToolbar() {

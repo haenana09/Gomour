@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-        <variable
-            name="message"
-            type="String" />
-    </data>
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,12 +18,11 @@
             android:gravity="center_vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/et_message"
+                android:id="@+id/tv_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#00000000"
-                android:textSize="14dp"
-                android:text="@{message}" />
+                android:textSize="14dp" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

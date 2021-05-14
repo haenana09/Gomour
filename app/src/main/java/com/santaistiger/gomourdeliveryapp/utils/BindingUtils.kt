@@ -14,11 +14,13 @@ import com.santaistiger.gomourdeliveryapp.ui.customview.DestinationView
 import com.santaistiger.gomourdeliveryapp.ui.customview.MessageView
 import com.santaistiger.gomourdeliveryapp.ui.customview.PriceView
 import com.santaistiger.gomourdeliveryapp.ui.orderdetail.StoreAdapter
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
 val TAG = "BindingUtils"
 
 object BindingUtils {
+    val numberFormat = NumberFormat.getInstance()
 
     @BindingAdapter("bind_store_list")
     @JvmStatic
@@ -42,7 +44,7 @@ object BindingUtils {
     fun bindDestination(view: DestinationView, item: MutableLiveData<Order>) {
         if (item.value != null) {
             val order = item.value!!
-            view.binding.item = order.destination
+            view.binding.tvStoreAddress.text = order.destination?.getDisplayName()
 
             when (order.status) {
                 Status.PICKUP_COMPLETE -> {
@@ -67,7 +69,7 @@ object BindingUtils {
     @JvmStatic
     fun bindMessage(view: MessageView, item: MutableLiveData<Order>) {
         if (item.value != null) {
-            view.binding.message = item.value!!.message
+            view.binding.tvMessage.text = item.value!!.message
         }
     }
 
@@ -80,7 +82,7 @@ object BindingUtils {
             for (store in order.stores!!) {
                 price += store.cost ?: 0
             }
-            view.binding.price = price
+            view.binding.tvPrice.text = numberFormat.format(price) + " 원"
         }
     }
 
@@ -90,9 +92,9 @@ object BindingUtils {
         if (item.value != null) {
             val order = item.value!!
             view.text = if (order.status == Status.DELIVERY_COMPLETE) {
-                SimpleDateFormat("hh:mm 배달 완료").format(order.deliveryTime)
+                SimpleDateFormat("yyyy-MM-dd (EEE) hh:mm 배달 완료").format(order.deliveryTime)
             } else {
-                SimpleDateFormat("hh:mm 배달 예정").format(order.deliveryTime)
+                SimpleDateFormat("yyyy-MM-dd (EEE) hh:mm 도착 예정").format(order.deliveryTime)
             }
         }
     }
@@ -102,7 +104,7 @@ object BindingUtils {
     fun bindCost(view: Button, item: Int?) {
         if (item != null) {
             view.isClickable = false
-            view.text = item.toString()
+            view.text = numberFormat.format(item)
         }
     }
 

@@ -5,11 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <variable
-            name="item"
-            type="com.santaistiger.gomourdeliveryapp.data.model.Place" />
-
         <variable
             name="viewModel"
             type="com.santaistiger.gomourdeliveryapp.ui.orderdetail.OrderDetailViewModel" />
@@ -45,7 +40,6 @@
                 android:layout_height="40dp"
                 android:layout_weight="6"
                 android:gravity="center_vertical"
-                android:text="@{item.getDisplayName}"
                 android:textSize="14dp"
                 tools:text="도착주소주소\n도착 주소를 주소" />
 
