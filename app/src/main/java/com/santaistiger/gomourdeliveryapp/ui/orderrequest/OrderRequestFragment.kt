@@ -36,8 +36,6 @@ class OrderRequestFragment(): DialogFragment() {
 
 
 
-
-
     fun valueSet() {
         val bundle = arguments
         val request: OrderRequest? = bundle?.getParcelable("order_request객체")
@@ -132,27 +130,37 @@ class OrderRequestFragment(): DialogFragment() {
 
 
         binding.yesbutton.setOnClickListener {
-            onClickedListener.OnClicked("HI")
+            positiveOnClickedListener.PositiveOnClicked("HI")
             dialog?.dismiss()
         }
 
         binding.nobutton.setOnClickListener {
-            Toast.makeText(requireContext(), "거절", Toast.LENGTH_LONG).show()
+            negativeOnClickedListener.negativeOnClickedListener("HI")
             dialog?.dismiss()
         }
     }
 
 
-    interface ButtonClickListener {
-        fun OnClicked(myName: String)
+    interface PositiveButtonClickListener {
+        fun PositiveOnClicked(myName: String)
     }
 
-    private lateinit var onClickedListener: ButtonClickListener
+    private lateinit var positiveOnClickedListener: PositiveButtonClickListener
 
-    fun setOnClickedListener(listener: ButtonClickListener) {
-        onClickedListener = listener
+    fun positiveSetOnClickedListener(listener: PositiveButtonClickListener) {
+        positiveOnClickedListener = listener
     }
 
+
+    interface NegativeButtonClickListener {
+        fun negativeOnClickedListener(myName: String)
+    }
+
+    private lateinit var negativeOnClickedListener: NegativeButtonClickListener
+
+    fun negativeSetOnClickedListener(listener: NegativeButtonClickListener) {
+        negativeOnClickedListener = listener
+    }
 
 
 
