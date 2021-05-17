@@ -34,6 +34,7 @@ import java.util.regex.Pattern
 
 
 class JoinFragment: Fragment() {
+
     private val GALLERY_CODE = 10
     private var auth: FirebaseAuth? = null
     private lateinit var binding: FragmentJoinBinding
@@ -79,8 +80,8 @@ class JoinFragment: Fragment() {
 
         //이메일 중복버튼
         binding.emailCheckButton.setOnClickListener {
-            checkEmail(object : CityCallback {
-                override fun isCityExist(exist: Boolean) {
+            checkEmail(object : EmailCallback {
+                override fun isEmailExist(exist: Boolean) {
                     if (exist){
                         binding.emailValid.visibility = View.VISIBLE
                         binding.emailValid.text = "이미 사용 중인 이메일입니다."
@@ -114,11 +115,10 @@ class JoinFragment: Fragment() {
             val uid = " "
 
             var deliveryMan = DeliveryMan(email, password, name, phone, uid, accountInfo, isCertified = false)
-            Log.d("Test", passwordCheck(passwordCheck).toString())
 
             //이메일 검사 -> 비밀번호 검사 -> 계정 생성
-            checkEmail(object : CityCallback {
-                override fun isCityExist(exist: Boolean){
+            checkEmail(object : EmailCallback {
+                override fun isEmailExist(exist: Boolean) {
                     if (exist) {
                         binding.emailValid.visibility = View.VISIBLE
                         binding.emailValid.text = "이미 사용 중인 이메일입니다."
@@ -137,6 +137,13 @@ class JoinFragment: Fragment() {
     }
 
 
+    //툴바
+    private fun setToolbar() {
+        requireActivity().apply {
+            toolbar.visibility = View.GONE  // 툴바 숨기기
+            drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)   // 스와이프 비활성화
+        }
+    }
 
     //이메일 채워져있는지 감지
     private val emailChageWatcher = object: TextWatcher {
@@ -162,7 +169,6 @@ class JoinFragment: Fragment() {
     }
 
 
-
     //비밀번호 체크 변경될때마다 인식
     private val passwordCheckChangeWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {
@@ -176,7 +182,6 @@ class JoinFragment: Fragment() {
         }
     }
 
-
     // 모든 영역이 채워져있는지 있는지 감지
     private val mTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(charSequence: CharSequence, i: Int, i2: Int, i3: Int) {}
@@ -187,12 +192,12 @@ class JoinFragment: Fragment() {
     }
 
 
-    interface CityCallback {
-        fun isCityExist(exist: Boolean)
+    interface EmailCallback {
+        fun isEmailExist(exist: Boolean)
     }
 
-
-    fun checkEmail(cityCallback: CityCallback){
+    // 이메일 존재하는지 확인
+    fun checkEmail(emailCallback: EmailCallback){
         val db = FirebaseFirestore.getInstance()
         val id = binding.emailEditText.text.toString()
         val email = id + "@dankook.ac.kr"
@@ -200,23 +205,17 @@ class JoinFragment: Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     if (task.result?.isEmpty == true){
-                        cityCallback.isCityExist((false)) //사용 가능
+                        emailCallback.isEmailExist((false)) //사용 가능
                     }
                     else{
-                        cityCallback.isCityExist(true) //사용 불가
+                        emailCallback.isEmailExist(true) //사용 불가
                     }
 
                 }
             }
     }
 
-    //툴바
-    private fun setToolbar() {
-        requireActivity().apply {
-            toolbar.visibility = View.GONE  // 툴바 숨기기
-            drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)   // 스와이프 비활성화
-        }
-    }
+
 
 
     //이미지 선택

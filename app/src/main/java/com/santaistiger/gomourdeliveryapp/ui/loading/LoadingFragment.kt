@@ -25,7 +25,6 @@ class LoadingFragment: Fragment() {
     ): View? {
 
         setToolbar()
-
         startLoading()
         return inflater.inflate(R.layout.fragment_loading, container, false)
     }
@@ -37,16 +36,18 @@ class LoadingFragment: Fragment() {
         }
     }
 
+    //2초 딜레이
     private fun startLoading() {
         val handler = Handler()
         handler.postDelayed(Runnable {
             auth()
-
         }, 2000)
     }
 
     private fun auth() {
         var auth = Firebase.auth
+
+        // shared preference에 로그인 정보 있는지 확인
         val auto = this.requireActivity().getSharedPreferences("auto", Context.MODE_PRIVATE)
         val loginEmail = auto.getString("email", null)
         val loginPwd = auto.getString("password", null)
@@ -55,11 +56,10 @@ class LoadingFragment: Fragment() {
             auth?.signInWithEmailAndPassword(loginEmail, loginPwd)?.addOnSuccessListener {
                 findNavController().navigate(R.id.action_loadingFragment_to_orderListFragment)
                 Toast.makeText(context, "안녕", Toast.LENGTH_LONG).show()
-
             }
         }
         else {
-            //로그인으로 가야지
+            // 로그인 페이지로 이동
             findNavController().navigate(R.id.action_loadingFragment_to_loginFragment)
         }
 
