@@ -66,7 +66,7 @@
                 android:layout_weight="1.5"
                 android:layout_height="match_parent"
                 android:hint="가격\n입력"
-                android:text="@{item.cost.toString()}"/>
+                bind_cost="@{item.cost}" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -15,39 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingVertical="10dp"
-        android:paddingHorizontal="15dp" >
-
-        <!-- 상단 레이아웃 - 햄버거 버튼 / 제목 -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp"
-            android:paddingHorizontal="5dp" >
-
-            <ImageButton
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/hamburger_btn"
-                android:background="#00000000"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/title_do_order_fragment"
-                android:gravity="center"
-                android:textSize="20dp"
-                android:textColor="@color/black"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="10dp">
 
         <!-- 스크롤 - 지도 / 정보 확인칸 / 연락 버튼 -->
         <ScrollView
@@ -58,120 +25,130 @@
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <!-- 지도 -->
                 <LinearLayout
                     android:id="@+id/map_view"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
+                    android:layout_marginBottom="10dp"
                     android:orientation="vertical"
-                    tools:background="#55555555"
-                    android:layout_marginBottom="10dp" >
-                </LinearLayout>
+                    tools:background="#55555555" />
+
+                <!-- 배달 시간 -->
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_delivery_time"
+                        bind_delivery_time="@{viewModel.order}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="18dp"
+                        tools:text="2021-03-29 (금) 13:24 도착 예정" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <!-- 출발지 및 목적지 -->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="10dp" >
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
 
                     <!-- 제목 -->
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="5dp"
                         android:text="@string/address_do_order_fragment"
-                        android:textSize="16dp"
                         android:textColor="@color/black"
-                        android:paddingLeft="5dp" />
+                        android:textSize="16dp" />
 
                     <!-- 가게 -->
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_store"
+                        bind_store_list="@{viewModel.order}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        bind_store_list="@{viewModel.storeList}" />
+                        android:nestedScrollingEnabled="false" />
 
                     <!-- 목적지 -->
                     <com.santaistiger.gomourdeliveryapp.ui.customview.DestinationView
                         android:id="@+id/cv_destination"
+                        bind_destination="@{viewModel.order}"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        bind_destination="@{viewModel.destination}" />
-
-
+                        android:layout_height="wrap_content" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <!-- 배송 메시지 -->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="10dp" >
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
 
                     <!-- 제목 -->
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="5dp"
                         android:text="@string/message_do_order_fragment"
-                        android:textSize="16dp"
                         android:textColor="@color/black"
-                        android:paddingLeft="5dp" />
+                        android:textSize="16dp" />
 
                     <!-- 메시지 -->
                     <com.santaistiger.gomourdeliveryapp.ui.customview.MessageView
                         android:id="@+id/cv_message"
+                        bind_message="@{viewModel.order}"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        bind_message="@{viewModel.message}" />
+                        android:layout_height="wrap_content" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <!-- 비용 -->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="10dp" >
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
 
                     <!-- 제목 -->
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="5dp"
                         android:text="@string/price_do_order_fragment"
-                        android:textSize="16dp"
                         android:textColor="@color/black"
-                        android:paddingLeft="5dp" />
+                        android:textSize="16dp" />
 
                     <!-- 가격 -->
                     <com.santaistiger.gomourdeliveryapp.ui.customview.PriceView
                         android:id="@+id/cv_price"
+                        bind_price="@{viewModel.order}"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        bind_price="@{viewModel.price}" />
+                        android:layout_height="wrap_content" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_call_customer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="주문자에게 전화하기"
-                    android:onClick="@{() -> viewModel.onCallBtnClick()}"/>
+                    android:onClick="@{() -> viewModel.onCallBtnClick()}"
+                    android:text="주문자에게 전화하기" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_text_customer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="주문자에게 문자하기"
-                    android:onClick="@{() -> viewModel.onTextBtnClick()}"/>
+                    android:onClick="@{() -> viewModel.onTextBtnClick()}"
+                    android:text="주문자에게 문자하기" />
 
             </LinearLayout>
         </ScrollView>
-
-
-
-
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

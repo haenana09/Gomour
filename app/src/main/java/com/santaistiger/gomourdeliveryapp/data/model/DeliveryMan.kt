@@ -7,6 +7,6 @@ data class DeliveryMan(
     val phone: String?= null,
     var uid: String? = null,
     val accountInfo: AccountInfo? = null,
-    var isCertified: Boolean = false
+    var certified: Boolean = false
 
 )
