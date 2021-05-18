@@ -363,7 +363,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Order(
                 customerUid = orderRequest.customerUid,
                 //deliveryManUid 받아와야돼 ~
-                deliveryManUid = "123456789",
+                deliveryManUid = repository.getUid(),
                 orderId = orderRequest.orderId,
                 stores = it,
                 deliveryCharge = orderRequest.deliveryCharge,
