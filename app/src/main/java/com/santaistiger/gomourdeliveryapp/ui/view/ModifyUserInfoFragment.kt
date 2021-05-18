@@ -1,5 +1,6 @@
 package com.santaistiger.gomourdeliveryapp.ui.view
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
@@ -24,6 +25,7 @@ import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentModifyUserInfoBinding
+import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.ModifyUserInfoViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 import java.util.regex.Pattern
@@ -215,8 +217,9 @@ class ModifyUserInfoFragment: Fragment() {
         }
         else{
             findNavController().navigate(R.id.action_modifyUserInfoFragment_to_loginFragment)
-
         }
+
+        (activity as BaseActivity).setNavigationDrawerHeader()  // 네비게이션 드로어 헤더 설정
     }
 
     //탈퇴 시
@@ -232,6 +235,7 @@ class ModifyUserInfoFragment: Fragment() {
     }
 
     // 탈퇴
+    @SuppressLint("RestrictedApi")
     private fun withdrawal(){
         var currentUser = Firebase.auth.currentUser
         currentUser.delete()
@@ -239,7 +243,6 @@ class ModifyUserInfoFragment: Fragment() {
                 Toast.makeText(context,"탈퇴 실패",Toast.LENGTH_LONG).show()
             }
             .addOnSuccessListener {
-                Toast.makeText(context,"탈퇴 성공",Toast.LENGTH_LONG).show()
             }
 
         db.collection("deliveryMan").document(currentUser.uid)
@@ -252,7 +255,13 @@ class ModifyUserInfoFragment: Fragment() {
                 editor.clear()
                 editor.commit()
 
-                findNavController().navigate(R.id.action_modifyUserInfoFragment_to_loginFragment)
+                // 백스택 제거
+                for (i in 1..findNavController().backStack.count()) {
+                    findNavController().popBackStack()
+                }
+
+                // 로그인 페이지로 이동
+                findNavController().navigate(R.id.loginFragment)
             }
             .addOnFailureListener { Toast.makeText(context,"탈퇴 실패", Toast.LENGTH_LONG).show() }
     }

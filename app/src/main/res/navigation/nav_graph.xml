@@ -56,7 +56,9 @@
         android:label="JoinFragment" >
         <action
             android:id="@+id/action_joinFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/modifyUserInfoFragment"
