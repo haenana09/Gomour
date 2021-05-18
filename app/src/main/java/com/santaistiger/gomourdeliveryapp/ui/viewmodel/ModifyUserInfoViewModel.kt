@@ -1,4 +1,4 @@
-package com.santaistiger.gomourdeliveryapp.ui.modifyuserinfo
+package com.santaistiger.gomourdeliveryapp.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 

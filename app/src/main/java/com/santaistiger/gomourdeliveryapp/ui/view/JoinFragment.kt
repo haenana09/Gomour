@@ -1,4 +1,4 @@
-package com.santaistiger.gomourdeliveryapp.ui.join
+package com.santaistiger.gomourdeliveryapp.ui.view
 
 import android.content.Intent
 import android.graphics.Color
@@ -28,8 +28,8 @@ import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.AccountInfo
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentJoinBinding
+import com.santaistiger.gomourdeliveryapp.ui.viewmodel.JoinViewModel
 import kotlinx.android.synthetic.main.activity_base.*
-import kotlinx.android.synthetic.main.fragment_join.*
 import java.util.regex.Pattern
 
 
@@ -330,11 +330,8 @@ class JoinFragment: Fragment() {
         val passwordCheck: String = binding.passwordCheckEditText.text.toString()
         val phone: String = binding.PhoneEditText.text.toString()
         val imageFileText = binding.imageFileText.text.toString()
-        if (email == "" || password == "" || passwordCheck=="" || phone=="" || imageFileText=="") {
-            signUpButton.isEnabled = false
-        } else {
-            signUpButton.isEnabled = true
-        }
+        signUpButton.isEnabled =
+            !(email == "" || password == "" || passwordCheck=="" || phone=="" || imageFileText=="")
     }
 
 
@@ -349,7 +346,7 @@ class JoinFragment: Fragment() {
                     deliveryMan.uid = user.uid
                     db.collection("deliveryMan")
                         .document(deliveryMan.uid!!).set(deliveryMan)
-                        .addOnSuccessListener { documentReference ->
+                        .addOnSuccessListener {
                             Toast.makeText(context,"학생증 인증을 기다리세요",Toast.LENGTH_LONG).show()
                             findNavController().navigate(R.id.action_joinFragment_to_loginFragment)
                         }

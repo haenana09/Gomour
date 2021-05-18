@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.databinding.ItemListStoreBinding
 
-class ListStoreView @JvmOverloads constructor(
+class StoreNameView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 

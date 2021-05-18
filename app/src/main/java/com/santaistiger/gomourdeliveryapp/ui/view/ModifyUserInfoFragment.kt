@@ -1,9 +1,8 @@
-package com.santaistiger.gomourdeliveryapp.ui.modifyuserinfo
+package com.santaistiger.gomourdeliveryapp.ui.view
 
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,6 +24,7 @@ import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentModifyUserInfoBinding
+import com.santaistiger.gomourdeliveryapp.ui.viewmodel.ModifyUserInfoViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 import java.util.regex.Pattern
 

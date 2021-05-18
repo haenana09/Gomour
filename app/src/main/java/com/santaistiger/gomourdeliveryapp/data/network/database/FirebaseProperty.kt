@@ -1,4 +1,4 @@
-package com.santaistiger.gomourdeliveryapp.data.network.firebase
+package com.santaistiger.gomourdeliveryapp.data.network.database
 
 import com.santaistiger.gomourdeliveryapp.data.model.Customer
 import com.santaistiger.gomourdeliveryapp.data.model.Order

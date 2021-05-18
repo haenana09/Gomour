@@ -1,4 +1,4 @@
-package com.santaistiger.gomourdeliveryapp.ui.login
+package com.santaistiger.gomourdeliveryapp.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 

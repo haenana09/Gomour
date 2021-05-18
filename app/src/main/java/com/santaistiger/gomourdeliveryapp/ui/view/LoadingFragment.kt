@@ -1,4 +1,4 @@
-package com.santaistiger.gomourdeliveryapp.ui.loading
+package com.santaistiger.gomourdeliveryapp.ui.view
 
 import android.content.Context
 import android.os.Bundle
@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.R
+import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_base.*
 
 
@@ -57,6 +58,7 @@ class LoadingFragment: Fragment() {
                 findNavController().navigate(R.id.action_loadingFragment_to_orderListFragment)
                 Toast.makeText(context, "안녕", Toast.LENGTH_LONG).show()
             }
+            (activity as BaseActivity).setNavigationDrawerHeader()
         }
         else {
             // 로그인 페이지로 이동
