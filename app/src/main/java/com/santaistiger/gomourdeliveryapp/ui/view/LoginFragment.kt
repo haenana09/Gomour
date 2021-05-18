@@ -92,11 +92,7 @@ class LoginFragment: Fragment(){
         val loginButton = binding.loginButton
         val email = binding.emailLogin.text.toString()
         val password: String = binding.passwordLogin.text.toString()
-        if (email == "" || password == "") {
-            loginButton.isEnabled = false
-        } else {
-            loginButton.isEnabled = true
-        }
+        loginButton.isEnabled = !(email == "" || password == "")
     }
 
     // 로그인
@@ -114,7 +110,7 @@ class LoginFragment: Fragment(){
                             if (data != null) {
 
                                 //학생증 인증이 완료된 상태 - 로그인 가능
-                                if(data.isCertified == true){
+                                if(data.isCertified){
 
                                     db.collection("deliveryMan")
                                     val auto = this.requireActivity()

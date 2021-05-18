@@ -119,7 +119,6 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setToolbar()    // 툴바 설정
         navigation_view.setNavigationItemSelectedListener(this)     // navigation 리스너 설정
-        setNavigationDrawerHeader()     // 네비게이션 드로어 헤더 설정
         setGetOrderStatusSwitch(childEventListener)     // 주문 받기 스위치 설정
     }
 
