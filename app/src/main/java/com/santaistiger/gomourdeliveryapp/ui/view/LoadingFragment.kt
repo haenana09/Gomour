@@ -56,9 +56,9 @@ class LoadingFragment: Fragment() {
             auth = Firebase.auth
             auth?.signInWithEmailAndPassword(loginEmail, loginPwd)?.addOnSuccessListener {
                 findNavController().navigate(R.id.action_loadingFragment_to_orderListFragment)
+                (activity as BaseActivity).setNavigationDrawerHeader()
                 Toast.makeText(context, "안녕", Toast.LENGTH_LONG).show()
             }
-            (activity as BaseActivity).setNavigationDrawerHeader()
         }
         else {
             // 로그인 페이지로 이동
