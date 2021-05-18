@@ -1,6 +1,5 @@
 package com.santaistiger.gomourdeliveryapp.utils
 
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
@@ -13,7 +12,7 @@ import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.ui.customview.DestinationView
 import com.santaistiger.gomourdeliveryapp.ui.customview.MessageView
 import com.santaistiger.gomourdeliveryapp.ui.customview.PriceView
-import com.santaistiger.gomourdeliveryapp.ui.orderdetail.StoreAdapter
+import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderDetailStoreAdapter
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
@@ -32,9 +31,9 @@ object BindingUtils {
             if (recyclerView.adapter == null) {
                 recyclerView.layoutManager =
                     LinearLayoutManager(recyclerView.context)
-                recyclerView.adapter = StoreAdapter()
+                recyclerView.adapter = OrderDetailStoreAdapter()
             }
-            (recyclerView.adapter as StoreAdapter).items = stores ?: ArrayList()
+            (recyclerView.adapter as OrderDetailStoreAdapter).items = stores ?: ArrayList()
             recyclerView.adapter?.notifyDataSetChanged()
         }
     }

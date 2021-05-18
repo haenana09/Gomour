@@ -1,16 +1,16 @@
-package com.santaistiger.gomourdeliveryapp.ui.orderlist
+package com.santaistiger.gomourdeliveryapp.ui.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.databinding.ItemOrderInfoBinding
-import com.santaistiger.gomourdeliveryapp.ui.customview.ListStoreView
+import com.santaistiger.gomourdeliveryapp.ui.customview.StoreNameView
+import com.santaistiger.gomourdeliveryapp.ui.view.OrderListFragmentDirections
 import kotlinx.android.synthetic.main.item_list_store.view.*
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -33,7 +33,11 @@ class OrderListAdapter(val context: Context?) : RecyclerView.Adapter<OrderListAd
         holder.itemView.setOnClickListener {
             // 아이템 클릭하면 해당 아이템의 주문 번호를 넘겨주며 주문 상세 화면으로 이동
             it.findNavController()
-                    .navigate(OrderListFragmentDirections.actionOrderListFragmentToOrderDetailFragment(orderId))
+                    .navigate(
+                        OrderListFragmentDirections.actionOrderListFragmentToOrderDetailFragment(
+                            orderId
+                        )
+                    )
         }
     }
 
@@ -62,7 +66,7 @@ class OrderListAdapter(val context: Context?) : RecyclerView.Adapter<OrderListAd
             binding.stores.removeAllViewsInLayout()
             if (order.stores!!.size >= 1) {
                 for (i in 0..order.stores!!.size - 1) {
-                    val view = ListStoreView(context)
+                    val view = StoreNameView(context)
                     view.store_num_string.setText("가게 " + (i + 1) + " : ")
                     view.store_name_string.setText(order.stores!![i].place.placeName)
                     binding.stores.addView(view)

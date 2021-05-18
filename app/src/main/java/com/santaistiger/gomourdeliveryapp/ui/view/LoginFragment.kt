@@ -1,4 +1,4 @@
-package com.santaistiger.gomourdeliveryapp.ui.login
+package com.santaistiger.gomourdeliveryapp.ui.view
 
 import android.app.AlertDialog
 import android.content.Context
@@ -8,7 +8,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,6 +22,8 @@ import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentLoginBinding
+import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
+import com.santaistiger.gomourdeliveryapp.ui.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.fragment_join.*
 

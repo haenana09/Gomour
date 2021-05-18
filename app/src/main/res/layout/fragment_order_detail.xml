@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.santaistiger.gomourdeliveryapp.ui.orderdetail.OrderDetailViewModel" />
+            type="com.santaistiger.gomourdeliveryapp.ui.viewmodel.OrderDetailViewModel" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat

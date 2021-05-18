@@ -1,4 +1,4 @@
-package com.santaistiger.gomourdeliveryapp.ui.orderrequest
+package com.santaistiger.gomourdeliveryapp.ui.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle

@@ -1,4 +1,4 @@
-package com.santaistiger.gomourdeliveryapp.data.network.firebase
+package com.santaistiger.gomourdeliveryapp.data.network.database
 
 import android.util.Log
 import android.view.View
@@ -9,19 +9,41 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.data.model.Order
-import com.santaistiger.gomourdeliveryapp.ui.orderlist.OrderListAdapter
+import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderListAdapter
+import kotlinx.coroutines.tasks.await
+import java.lang.Exception
+
 
 private const val TAG: String = "FirebaseApiService"
 private const val ORDER_REQUEST_TABLE = "order_request"
 private const val ORDER_TABLE = "order"
 
-object FirebaseApi {
+
+object RealtimeApi {
     private val database = Firebase.database
     private val orderRequestTable = database.getReference(ORDER_REQUEST_TABLE)
     private val orderTable = database.getReference(ORDER_TABLE)
 
+    suspend fun readOrderDetail(orderId: String): OrderResponse {
+        val response = OrderResponse()
+        try {
+            response.order = orderTable.child(orderId)
+                .get().await().getValue(Order::class.java)
+
+        } catch (e: Exception) {
+            response.exception = e
+            e.printStackTrace()
+        }
+        return response
+    }
+
+
+    fun updateOrder(key: String, order: Order) {
+        orderTable.child(key).setValue(order)
+    }
+
     // 배달원의 주문 목록 받아오기
-    fun getOrders(deliveryManUid: String, adapter: OrderListAdapter, textView: TextView) {
+    fun readOrderList(deliveryManUid: String, adapter: OrderListAdapter, textView: TextView) {
         val orders = mutableListOf<Order>()
         val ordersReference = orderTable.orderByChild("deliveryManUid").equalTo(deliveryManUid)
 

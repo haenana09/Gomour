@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/orderDetailFragment"
-        android:name="com.santaistiger.gomourdeliveryapp.ui.orderdetail.OrderDetailFragment"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.view.OrderDetailFragment"
         android:label="OrderDetailFragment" >
         <argument
             android:name="orderId"
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/orderListFragment"
-        android:name="com.santaistiger.gomourdeliveryapp.ui.orderlist.OrderListFragment"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.view.OrderListFragment"
         android:label="fragment_order_list"
         tools:layout="@layout/fragment_order_list" >
         <action
@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/loadingFragment"
-        android:name="com.santaistiger.gomourdeliveryapp.ui.loading.LoadingFragment"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.view.LoadingFragment"
         android:label="LoadingFragment" >
         <action
             android:id="@+id/action_loadingFragment_to_loginFragment"
@@ -39,7 +39,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.santaistiger.gomourdeliveryapp.ui.login.LoginFragment"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.view.LoginFragment"
         android:label="LoginFragment" >
         <action
             android:id="@+id/action_loginFragment_to_joinFragment"
@@ -52,7 +52,7 @@
     </fragment>
     <fragment
         android:id="@+id/joinFragment"
-        android:name="com.santaistiger.gomourdeliveryapp.ui.join.JoinFragment"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.view.JoinFragment"
         android:label="JoinFragment" >
         <action
             android:id="@+id/action_joinFragment_to_loginFragment"
@@ -60,7 +60,7 @@
     </fragment>
     <fragment
         android:id="@+id/modifyUserInfoFragment"
-        android:name="com.santaistiger.gomourdeliveryapp.ui.modifyuserinfo.ModifyUserInfoFragment"
+        android:name="com.santaistiger.gomourdeliveryapp.ui.view.ModifyUserInfoFragment"
         android:label="ModifyUserInfoFragment" >
         <action
             android:id="@+id/action_modifyUserInfoFragment_to_loginFragment"

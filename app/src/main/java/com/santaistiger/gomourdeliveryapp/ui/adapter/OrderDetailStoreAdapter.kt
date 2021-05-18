@@ -1,4 +1,4 @@
-package com.santaistiger.gomourdeliveryapp.ui.orderdetail
+package com.santaistiger.gomourdeliveryapp.ui.adapter
 
 import android.text.InputType
 import android.text.SpannableStringBuilder
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.santaistiger.gomourdeliveryapp.data.model.Store
 import com.santaistiger.gomourdeliveryapp.databinding.ItemStoreBinding
 
-class StoreAdapter : RecyclerView.Adapter<StoreAdapter.ViewHolder>() {
+class OrderDetailStoreAdapter : RecyclerView.Adapter<OrderDetailStoreAdapter.ViewHolder>() {
     val TAG = "StoreAdapter"
     var items = ArrayList<Store>()
 

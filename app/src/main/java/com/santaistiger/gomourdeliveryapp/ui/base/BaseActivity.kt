@@ -6,27 +6,31 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.telephony.PhoneNumberUtils
 import android.util.Log
 import android.view.MenuItem
 import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.Switch
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.databinding.ObservableField
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.pedro.library.AutoPermissions
 import com.santaistiger.gomourdeliveryapp.R
+import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.model.OrderRequest
 import com.santaistiger.gomourdeliveryapp.data.model.Status
-import com.santaistiger.gomourdeliveryapp.ui.orderrequest.OrderRequestFragment
+import com.santaistiger.gomourdeliveryapp.data.repository.Repository
+import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
+import com.santaistiger.gomourdeliveryapp.ui.view.OrderRequestFragment
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.dialog_deliverytime.*
 import kotlinx.android.synthetic.main.fragment_order_request.*
@@ -39,6 +43,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val TAG = "BaseActivity"
     val database = Firebase.database
     val databaseReference: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
+    private val repository: Repository = RepositoryImpl
 
     // reqltimeDB에서 받아온 주문 리스트
     var order_request_list = ArrayList<OrderRequest>()
@@ -129,12 +134,21 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     // 네비게이션 드로어 헤더에 현재 로그인한 회원 정보 설정
-    private fun setNavigationDrawerHeader() {
+    fun setNavigationDrawerHeader() {
+        val tmpUid = repository.getUid()
+        Log.d(TAG, "uid: $tmpUid")
         val header = navigation_view.getHeaderView(0)
-        header.apply {
-            user_name_string.setText("강단국")
-            user_phone_num_string.setText("010-1234-5678")
-            user_email_string.setText("32181234@dankook.ac.kr")
+        val docRef = Firebase.firestore.collection("deliveryMan").document(tmpUid)
+        docRef.get().addOnSuccessListener { documentSnapshot ->
+            val currentUserInfo = documentSnapshot.toObject<DeliveryMan>()
+            if (currentUserInfo != null) {
+                header.apply {
+                    user_name_string.text = currentUserInfo.name
+                    user_phone_num_string.text =
+                        PhoneNumberUtils.formatNumber(currentUserInfo.phone, Locale.getDefault().country)
+                    user_email_string.text = currentUserInfo.email
+                }
+            }
         }
     }
 

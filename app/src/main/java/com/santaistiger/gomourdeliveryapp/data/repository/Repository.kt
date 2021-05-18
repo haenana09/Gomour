@@ -7,5 +7,6 @@ interface Repository {
     suspend fun getOrderDetail(orderId: String): Order?
     suspend fun getCustomerPhone(customerUid: String): String?
     fun updateOrder(order: Order)
+    fun getUid(): String
 
 }
