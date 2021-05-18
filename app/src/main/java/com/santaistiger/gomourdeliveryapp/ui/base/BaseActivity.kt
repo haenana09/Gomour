@@ -68,34 +68,57 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Auto permission
         AutoPermissions.loadAllPermissions(this, 1)
 
+        setToolbar()    // 툴바 설정
+        navigation_view.setNavigationItemSelectedListener(this)     // navigation 리스너 설정
+        setNavigationDrawerHeader()     // 네비게이션 드로어 헤더 설정
+        setGetOrderStatusSwitch(childEventListener)     // 주문 받기 스위치 설정
+    }
+
+    // 툴바 설정
+    private fun setToolbar() {
         setSupportActionBar(toolbar)    // 툴바를 액티비티의 앱바로 지정
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)   // 툴바 홈버튼 활성화
             setHomeAsUpIndicator(R.drawable.hamburger_btn)     // 홈버튼 이미지 변경
             setDisplayShowTitleEnabled(false)     // 툴바에 앱 타이틀 보이지 않도록 설정
         }
+    }
 
-        // navigation 리스너 설정
-        navigation_view.setNavigationItemSelectedListener(this)
-
-        // 네비게이션 드로어 헤더 텍스트뷰 값 변경
+    // 네비게이션 드로어 헤더에 현재 로그인한 회원 정보 설정
+    private fun setNavigationDrawerHeader() {
         val header = navigation_view.getHeaderView(0)
         header.apply {
             user_name_string.setText("강단국")
             user_phone_num_string.setText("010-1234-5678")
             user_email_string.setText("32181234@dankook.ac.kr")
         }
+    }
 
-        // 주문 받기 스위치 클릭 설정
+    // 주문 받기 스위치 설정
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private fun setGetOrderStatusSwitch(childEventListener: ChildEventListener) {
+        // 배달 진행 중인지 상태 표시
+        val isOnDelivery = false
+
         val item = navigation_view.menu.findItem(R.id.getOrderStatus)
         val get_order_status_switch = item.actionView.findViewById<Switch>(R.id.get_order_status_switch)
-        get_order_status_switch.setOnCheckedChangeListener( object : CompoundButton.OnCheckedChangeListener{
+        get_order_status_switch.setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener {
             override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-                if (isChecked) {
-                    Log.d(TAG, "주문 받기 on")
-                    // 주문 받도록 설정
-                    myRef.addChildEventListener(childEventListener)
-                } else {
+                if (isChecked) {    // 주문 받기 스위치 on으로 변경
+                    if (isOnDelivery) {     // 현재 배달중인 주문이 있을 경우
+                        androidx.appcompat.app.AlertDialog.Builder(this@BaseActivity)
+                                .setMessage("현재 배달중인 주문이 있어 배달 완료 전까지 주문 받기 상태를 ON으로 변경할 수 없습니다.")
+                                .setPositiveButton("확인", null)
+                                .create()
+                                .show()
+
+                        get_order_status_switch.setChecked(false)   // 주문 받기 스위치 off로 설정
+                    } else {
+                        Log.d(TAG, "주문 받기 on")
+                        // 주문 받도록 설정
+                        myRef.addChildEventListener(childEventListener)
+                    }
+                } else {    // 주문 받기 스위치 off로 변경
                     Log.d(TAG, "주문 받기 off")
                     // 주문 더이상 받지 않도록 설정
                     myRef.removeEventListener(childEventListener)
