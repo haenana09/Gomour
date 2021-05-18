@@ -20,6 +20,4 @@ class MessageView @JvmOverloads constructor(
             this,
             true
     )
-
-    fun getMessage(): String = binding.etMessage.text.toString()
 }

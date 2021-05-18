@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
@@ -23,6 +24,8 @@ import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentLoginBinding
 import kotlinx.android.synthetic.main.activity_base.*
+import kotlinx.android.synthetic.main.fragment_join.*
+
 
 class LoginFragment: Fragment(){
 
@@ -31,18 +34,59 @@ class LoginFragment: Fragment(){
     private lateinit var viewModel: LoginViewModel
 
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        // 툴바 숨기기
+        setToolbar()
+
+        auth = Firebase.auth
+        binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater,
+            R.layout.fragment_login,container,false)
+        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+
+        // 빈칸 감지
+        binding.emailLogin.addTextChangedListener(mTextWatcher)
+        binding.passwordLogin.addTextChangedListener(mTextWatcher)
+
+        // 로그인 버튼 눌렀을 때
+        binding.loginButton.setOnClickListener{
+            val id = binding.emailLogin.text.toString()
+            val email = id + "@dankook.ac.kr"
+            val password = binding.passwordLogin.text.toString()
+            signIn(email,password)
+        }
 
 
-    //  create a textWatcher member
+        // 회워가입 누르면 회원가입페이지로 이동
+        binding.goSignUpPage.setOnClickListener{
+            findNavController().navigate(R.id.action_loginFragment_to_joinFragment)
+        }
+
+        return binding.root
+    }
+
+
+    private fun setToolbar() {
+        requireActivity().apply {
+            toolbar.visibility = View.GONE  // 툴바 숨기기
+            drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)   // 스와이프 비활성화
+        }
+    }
+
+
+    // EditTExt 비어있는지 확인
     private val mTextWatcher: TextWatcher = object : TextWatcher {
         override fun beforeTextChanged(charSequence: CharSequence, i: Int, i2: Int, i3: Int) {}
         override fun onTextChanged(charSequence: CharSequence, i: Int, i2: Int, i3: Int) {}
         override fun afterTextChanged(editable: Editable) {
-            // check Fields For Empty Values
             checkFieldsForEmptyValues()
         }
     }
 
+    // 이메일과 패스워드의 입력유무에 따라 버튼 활성화
     fun checkFieldsForEmptyValues() {
         val loginButton = binding.loginButton
         val email = binding.emailLogin.text.toString()
@@ -54,74 +98,21 @@ class LoginFragment: Fragment(){
         }
     }
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        setToolbar()
-
-        auth = Firebase.auth
-        binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater,
-            R.layout.fragment_login,container,false)
-        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-
-
-
-        binding.emailLogin.addTextChangedListener(mTextWatcher)
-        binding.passwordLogin.addTextChangedListener(mTextWatcher)
-
-        // run once to disable if empty
-        checkFieldsForEmptyValues();
-
-        binding.loginButton.setOnClickListener{
-            val id = binding.emailLogin.text.toString()
-            val email = id + "@dankook.ac.kr"
-            val password = binding.passwordLogin.text.toString()
-            signIn(email,password)
-        }
-
-
-        binding.goSignUpPage.setOnClickListener{
-            findNavController().navigate(R.id.action_loginFragment_to_joinFragment)
-        }
-
-
-
-
-
-
-
-
-
-
-        return binding.root
-    }
-
-    private fun setToolbar() {
-        requireActivity().apply {
-            toolbar.visibility = View.GONE  // 툴바 숨기기
-            drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)   // 스와이프 비활성화
-        }
-    }
-
+    // 로그인
     private fun signIn(email:String, password:String){
-        if (email.contains("@dankook.ac.kr")){
-
             auth?.signInWithEmailAndPassword(email, password)
                 ?.addOnCompleteListener(){ task ->
                     if(task.isSuccessful){
 
-
                         //파이어스토어에서 인증상태 확인
                         val user = auth!!.currentUser
                         val db = Firebase.firestore
-
                         val docRef = db.collection("deliveryMan").document(user.uid)
                         docRef.get().addOnSuccessListener { documentSnapshot ->
                             val data = documentSnapshot.toObject<DeliveryMan>()
                             if (data != null) {
+
+                                //학생증 인증이 완료된 상태 - 로그인 가능
                                 if(data.isCertified == true){
 
                                     db.collection("deliveryMan")
@@ -132,35 +123,24 @@ class LoginFragment: Fragment(){
                                     autoLogin.putString("password",password)
                                     autoLogin.commit()
                                     Toast.makeText(context,"commit 완료", Toast.LENGTH_LONG).show()
+
+                                    // 주문 목록 페이지로 이동
                                     findNavController().navigate(R.id.action_loginFragment_to_orderListFragment)
                                 }
                                 else{
+                                    //학생증인증이 안되었을 때
                                     Toast.makeText(context,"아직 학생증 인증이 완료되지 않았습니다",Toast.LENGTH_LONG).show()
                                 }
                             }
                         }
-
-
                     }
                 }
+
                 ?.addOnFailureListener {
+                    // 해당 정보가 없을 때
                     alertCancel()
                 }
-
         }
-
-        else{
-            Toast.makeText(context,"학교이메일만 사용가능합니다.",Toast.LENGTH_LONG).show()
-        }
-
-
-    }
-
-
-
-
-
-
 
 
     fun alertCancel() {

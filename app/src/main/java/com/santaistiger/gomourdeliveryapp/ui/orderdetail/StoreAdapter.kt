@@ -1,6 +1,5 @@
 package com.santaistiger.gomourdeliveryapp.ui.orderdetail
 
-import android.text.Editable
 import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
@@ -10,16 +9,10 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.santaistiger.gomourdeliveryapp.data.model.Store
-import com.santaistiger.gomourdeliveryapp.data.repository.Repository
-import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.ItemStoreBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.lang.reflect.Array.get
 
 class StoreAdapter : RecyclerView.Adapter<StoreAdapter.ViewHolder>() {
-    private val repository: Repository = RepositoryImpl
+    val TAG = "StoreAdapter"
     var items = ArrayList<Store>()
 
     override fun getItemCount(): Int = items.size
@@ -34,12 +27,16 @@ class StoreAdapter : RecyclerView.Adapter<StoreAdapter.ViewHolder>() {
         holder.bind(items[position])
     }
 
+    /**
+     * 상품 가격 입력하는 다이얼로그 띄우는 함수
+     */
     private fun inputPrice(it: View, position: Int) {
-        val item = items[position]
         val editText = EditText(it.context).apply {
             inputType = InputType.TYPE_CLASS_NUMBER
-            if (item.cost != null) {
-                text = SpannableStringBuilder(item.cost.toString())
+            text = if (items[position].cost != null) {
+                SpannableStringBuilder(items[position].cost.toString())
+            } else {
+                SpannableStringBuilder(String())
             }
         }
 
@@ -47,9 +44,7 @@ class StoreAdapter : RecyclerView.Adapter<StoreAdapter.ViewHolder>() {
             .setTitle("해당 가게의 물품 가격을 입력하세요")
             .setView(editText)
             .setPositiveButton("확인") { _, _ ->
-                item.cost = editText.text.toString().toInt()
-                items[position] = item
-
+                items[position].cost = editText.text.toString().toInt()
                 notifyDataSetChanged()
             }
             .setNegativeButton("취소", null)

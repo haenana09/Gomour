@@ -18,11 +18,11 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 data class OrderRequest(
-        val customerUid: String? =null,
+        val customerUid: String? = null,
         val stores: ArrayList<Store>? = null,
         val deliveryCharge: Int? = null,
         val destination: Place? = null,
         val message: String? = null,
-        val orderDate: Long = System.currentTimeMillis(),
-        val orderId: String = "$orderDate$customerUid"
-):Parcelable
+        val orderDate: Long? = null,
+        val orderId: String? = null
+) : Parcelable
