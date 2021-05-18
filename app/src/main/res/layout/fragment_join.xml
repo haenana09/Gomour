@@ -86,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="9dp"
-            android:textColor="#F44336"
+            android:textColor="#000000"
             android:visibility="gone" />
 
         <EditText
@@ -111,7 +111,7 @@
             android:id="@+id/passwordValid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#F44336"
+            android:textColor="@color/black"
             android:visibility="gone" />
 
         <EditText
