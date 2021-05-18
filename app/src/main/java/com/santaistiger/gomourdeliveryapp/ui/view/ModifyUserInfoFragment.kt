@@ -25,6 +25,7 @@ import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentModifyUserInfoBinding
+import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.ModifyUserInfoViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 import java.util.regex.Pattern
@@ -216,8 +217,9 @@ class ModifyUserInfoFragment: Fragment() {
         }
         else{
             findNavController().navigate(R.id.action_modifyUserInfoFragment_to_loginFragment)
-
         }
+
+        (activity as BaseActivity).setNavigationDrawerHeader()  // 네비게이션 드로어 헤더 설정
     }
 
     //탈퇴 시

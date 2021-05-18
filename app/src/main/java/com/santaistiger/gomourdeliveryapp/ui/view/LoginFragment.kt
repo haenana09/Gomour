@@ -123,6 +123,7 @@ class LoginFragment: Fragment(){
 
                                     // 주문 목록 페이지로 이동
                                     findNavController().navigate(R.id.action_loginFragment_to_orderListFragment)
+                                    (activity as BaseActivity).setNavigationDrawerHeader()  // 네비게이션 드로어 헤더 설정
                                 }
                                 else{
                                     //학생증인증이 안되었을 때
