@@ -17,4 +17,9 @@
     <string name="modify_user_info_navdrawer_menu">회원 정보 변경</string>
     <string name="logout_navdrawer_menu">로그아웃</string>
     <string name="get_order_status_navdrawer_menu">주문 받기</string>
+
+    <!-- 팝업창 관련 resource -->
+    <string name="order_request_title">새로운 요청</string>
+    <string name="order_request_no">거절</string>
+    <string name="order_request_yes">수락</string>
 </resources>

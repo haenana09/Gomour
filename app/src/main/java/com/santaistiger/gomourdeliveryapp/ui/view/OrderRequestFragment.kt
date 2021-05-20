@@ -2,12 +2,16 @@ package com.santaistiger.gomourdeliveryapp.ui.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.DialogFragment
 import com.santaistiger.gomourdeliveryapp.data.model.OrderRequest
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentOrderRequestBinding
+import com.santaistiger.gomourdeliveryapp.ui.customview.OrderRequest_DestinationView
+import com.santaistiger.gomourdeliveryapp.ui.customview.OrderRequest_StoreView
+import kotlinx.android.synthetic.main.item_list_store.view.*
+import kotlinx.android.synthetic.main.item_order_request_destination.view.*
+import kotlinx.android.synthetic.main.item_order_request_store.view.*
+
 
 class OrderRequestFragment(): DialogFragment() {
 
@@ -16,7 +20,7 @@ class OrderRequestFragment(): DialogFragment() {
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentOrderRequestBinding.inflate(inflater, container, false)
-
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         valueSet()
         return binding.root
     }
@@ -27,88 +31,24 @@ class OrderRequestFragment(): DialogFragment() {
         val request: OrderRequest? = bundle?.getParcelable("order_request객체")
         val stores_count  = request?.stores?.count()
 
-
-        if (stores_count == 1) {
-            binding.place1.text = request?.stores?.get(0)?.place?.placeName
-            binding.menu1.text = request?.stores?.get(0)?.menu
-            //destination
-            binding.destination.text = request?.destination?.placeName
-            //deliverycharge
-            binding.deliverycharge.text = request?.deliveryCharge.toString()
-
-            binding.menu2.visibility = View.GONE
-            binding.place2.visibility = View.GONE
-            //binding.placeimg2.visibility = View.GONE
-            binding.menu3.visibility = View.GONE
-            binding.place3.visibility = View.GONE
-            // binding.placeimg3.visibility = View.GONE
-            binding.menu4.visibility = View.GONE
-            binding.place4.visibility = View.GONE
-            //binding.placeimg4.visibility = View.GONE
+        // 가게
+        binding.orStores.removeAllViewsInLayout()
+        if(stores_count!! >= 1){
+            for(i in 0..stores_count!! -1){
+                val view = OrderRequest_StoreView(requireContext())
+                view.or_store_address.setText(request.stores[i].place.getDisplayName())
+                view.or_menu.setText(request.stores[i].menu)
+                binding.orStores.addView(view)
+            }
         }
 
+        // 도착지
+        binding.orDestination.removeAllViewsInLayout()
+        val destView = OrderRequest_DestinationView(requireContext())
+        destView.or_destination_address.setText(request.destination!!.getDisplayName())
+        binding.orDestination.addView(destView)
 
-        else if (stores_count == 2) {
-            //place
-            binding.place1.text = request?.stores?.get(0)?.place?.placeName
-            binding.place2.text = request?.stores?.get(1)?.place?.placeName
-
-            //menu
-            binding.menu1.text = request?.stores?.get(0)?.menu
-            binding.menu2.text = request?.stores?.get(1)?.menu
-
-            //destination
-            binding.destination.text = request?.destination?.placeName
-            //deliverycharge
-            binding.deliverycharge.text = request?.deliveryCharge.toString()
-
-            binding.menu3.visibility = View.GONE
-            binding.place3.visibility = View.GONE
-            //binding.placeimg3.visibility = View.GONE
-            binding.menu4.visibility = View.GONE
-            binding.place4.visibility = View.GONE
-            // binding.placeimg4.visibility = View.GONE
-
-        } else if (stores_count == 3) {
-            //place
-            binding.place1.text = request?.stores?.get(0)?.place?.placeName
-            binding.place2.text = request?.stores?.get(1)?.place?.placeName
-            binding.place3.text = request?.stores?.get(2)?.place?.placeName
-
-            //menu
-            binding.menu1.text = request?.stores?.get(0)?.menu
-            binding.menu2.text = request?.stores?.get(1)?.menu
-            binding.menu3.text = request?.stores?.get(2)?.menu
-            //destination
-            binding.destination.text = request?.destination?.placeName
-            //deliverycharge
-            binding.deliverycharge.text = request?.deliveryCharge.toString()
-
-            binding.menu4.visibility = View.GONE
-            binding.place4.visibility = View.GONE
-            // binding.placeimg4.visibility = View.GONE
-
-
-        }
-
-        else {
-            //place
-            binding.place1.text = request?.stores?.get(0)?.place?.placeName
-            binding.place2.text = request?.stores?.get(1)?.place?.placeName
-            binding.place3.text = request?.stores?.get(2)?.place?.placeName
-            binding.place4.text = request?.stores?.get(3)?.place?.placeName
-
-            //menu
-            binding.menu1.text = request?.stores?.get(0)?.menu
-            binding.menu2.text = request?.stores?.get(1)?.menu
-            binding.menu3.text = request?.stores?.get(2)?.menu
-            binding.menu4.text = request?.stores?.get(3)?.menu
-
-            //destination
-            binding.destination.text = request?.destination?.placeName
-            //deliverycharge
-            binding.deliverycharge.text = request?.deliveryCharge.toString()
-        }
+        binding.orDeliveryCharge.text = request.deliveryCharge.toString()
 
 
         binding.yesbutton.setOnClickListener {
