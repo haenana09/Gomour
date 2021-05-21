@@ -9,6 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.data.model.Order
+import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderListAdapter
 import kotlinx.coroutines.tasks.await
 import java.lang.Exception
@@ -43,7 +44,7 @@ object RealtimeApi {
     }
 
     // 배달원의 주문 목록 받아오기
-    fun readOrderList(deliveryManUid: String, adapter: OrderListAdapter, textView: TextView) {
+    fun readOrderList(deliveryManUid: String, adapter: OrderListAdapter, textView: TextView, recentOrder: Order) {
         val orders = mutableListOf<Order>()
         val ordersReference = orderTable.orderByChild("deliveryManUid").equalTo(deliveryManUid)
 
@@ -52,23 +53,23 @@ object RealtimeApi {
                 orders.clear()
                 adapter.orders.clear()
 
-                for (messageSnapshot in dataSnapshot.children) {
-                    val order: Order? = messageSnapshot.getValue(Order::class.java)
-                    if (order != null) {
-                        orders.add(order)
+                if (dataSnapshot.exists()) {
+                    for (messageSnapshot in dataSnapshot.children) {
+                        val order: Order? = messageSnapshot.getValue(Order::class.java)
+                        if (order != null) {
+                            orders.add(order)
+                        }
                     }
-                }
 
-                // 날짜 역순으로 재배열 후 adapter의 orders에 할당
-                adapter.orders = orders.asReversed()
-                Log.d(TAG, "orders was changed")
-                adapter.notifyDataSetChanged()
+                    // 최근 날짜 순으로 주문 목록 재배열 후 adapter의 orders에 할당
+                    adapter.orders = orders.asReversed()
+                    adapter.notifyDataSetChanged()
 
-                // 주문 내역이 없을 경우 안내 문구 표시
-                if (adapter.orders.count() == 0) {
-                    textView.visibility = View.VISIBLE
+                    textView.visibility = View.GONE     // 빈 리싸이클러뷰 안내 문구 숨김
+                    recentOrder.status = orders.last().status   // 최근 주문의 배달 상태 설정
                 } else {
-                    textView.visibility = View.GONE
+                    textView.visibility = View.VISIBLE  // 빈 리싸이클러뷰 안내 문구 표시
+                    recentOrder.status = Status.DELIVERY_COMPLETE   // 최근 주문의 배달 상태 설정
                 }
             }
 

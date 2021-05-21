@@ -14,6 +14,7 @@ import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentOrderListBinding
 import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderListAdapter
+import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.OrderListViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 
@@ -41,7 +42,7 @@ class OrderListFragment : Fragment() {
         val adapter = OrderListAdapter(context)
         val deliveryManUid = repository.getUid()
         val emptyTextView = binding.emptyNoticeString
-        RealtimeApi.readOrderList(deliveryManUid, adapter, emptyTextView)
+        RealtimeApi.readOrderList(deliveryManUid, adapter, emptyTextView, (activity as BaseActivity).recentOrder)
         binding.orderList.adapter = adapter
 
         return binding.root

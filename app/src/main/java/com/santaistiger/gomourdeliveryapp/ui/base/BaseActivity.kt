@@ -45,6 +45,9 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val databaseReference: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
     private val repository: Repository = RepositoryImpl
 
+    // 배달원의 최근 주문
+    var recentOrder = Order()
+
     // reqltimeDB에서 받아온 주문 리스트
     var order_request_list = ArrayList<OrderRequest>()
 
@@ -135,7 +138,6 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // 네비게이션 드로어 헤더에 현재 로그인한 회원 정보 설정
     fun setNavigationDrawerHeader() {
         val tmpUid = repository.getUid()
-        Log.d(TAG, "uid: $tmpUid")
         val header = navigation_view.getHeaderView(0)
         val docRef = Firebase.firestore.collection("deliveryMan").document(tmpUid)
         docRef.get().addOnSuccessListener { documentSnapshot ->
@@ -154,8 +156,6 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // 주문 받기 스위치 설정
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun setGetOrderStatusSwitch(childEventListener: ChildEventListener) {
-        // 배달 진행 중인지 상태 표시
-        val isOnDelivery = false
 
         // 주문 받기 스위치 클릭 설정
         val item = navigation_view.menu.findItem(R.id.getOrderStatus)
@@ -165,7 +165,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             CompoundButton.OnCheckedChangeListener {
             override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
                 if (isChecked) {    // 주문 받기 스위치 on으로 변경
-                    if (isOnDelivery) {     // 현재 배달중인 주문이 있을 경우
+                    if (recentOrder.status != Status.DELIVERY_COMPLETE) {     // 현재 배달중인 주문이 있을 경우
                         androidx.appcompat.app.AlertDialog.Builder(this@BaseActivity)
                             .setMessage("현재 배달중인 주문이 있어 배달 완료 전까지 주문 받기 상태를 ON으로 변경할 수 없습니다.")
                             .setPositiveButton("확인", null)
@@ -184,13 +184,13 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     Log.d(TAG, "주문 받기 off")
                     order_request_list.clear()
                     popUpState = 1 // 팝업창 못띄우도록 설정
+
                     // 주문 더이상 받지 않도록 설정
                     myRef.removeEventListener(childEventListener)
                 }
             }
         })
     }
-
 
     // 주문 요청 리스트 받아오기 위한 인터페이스 선언
     interface DataListener {
