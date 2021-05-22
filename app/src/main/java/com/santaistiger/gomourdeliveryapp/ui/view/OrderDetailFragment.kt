@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -17,8 +16,12 @@ import com.santaistiger.gomourdeliveryapp.data.model.Place
 import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentOrderDetailBinding
+import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderDetailStoreAdapter
+import com.santaistiger.gomourdeliveryapp.ui.customview.RoundedAlertDialog
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.OrderDetailViewModel
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.OrderDetailViewModelFactory
+import com.santaistiger.gomourdeliveryapp.utils.NotEnteredException
+import com.santaistiger.gomourdeliveryapp.utils.StatusException
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,15 +31,18 @@ import net.daum.mf.map.api.MapPOIItem
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
-private val DANKOOKUNIV_LOCATION =
-    MapPoint.mapPointWithGeoCoord(37.32224683322665, 127.12683613068711)
 
 class OrderDetailFragment : Fragment() {
+    companion object {
+        private val DANKOOKUNIV_LOCATION =
+            MapPoint.mapPointWithGeoCoord(37.32224683322665, 127.12683613068711)
+        private const val TAG = "OrderDetailFragment"
+    }
+
     private lateinit var binding: FragmentOrderDetailBinding
     private lateinit var viewModel: OrderDetailViewModel
     private lateinit var mapView: MapView
     private val repository: Repository = RepositoryImpl
-    val TAG = "OrderDetailFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +66,8 @@ class OrderDetailFragment : Fragment() {
             false
         )
 
-        val orderId = OrderDetailFragmentArgs.fromBundle(requireArguments()).orderId
+        val orderId = "1621533540427AA2m6EVCdYZG68XdYWKO2O5O6263"
+//        val orderId = OrderDetailFragmentArgs.fromBundle(requireArguments()).orderId
         viewModel = ViewModelProvider(this, OrderDetailViewModelFactory(orderId))
             .get(OrderDetailViewModel::class.java)
         binding.viewModel = viewModel
@@ -105,9 +112,9 @@ class OrderDetailFragment : Fragment() {
     private fun setTextBtnObserver() {
         viewModel.isTextBtnClick.observe(viewLifecycleOwner, Observer { clicked ->
             if (clicked) {
-                AlertDialog.Builder(requireContext())
+                RoundedAlertDialog()
                     .setMessage("주문자에게 문자를 전송하시겠습니까?")
-                    .setPositiveButton("확인") { _, _ ->
+                    .setPositiveButton("확인") {
                         CoroutineScope(Dispatchers.IO).launch {
                             val customerUid = viewModel.getCustomerUid()
                             val deferredPhone = async { repository.getCustomerPhone(customerUid) }
@@ -119,13 +126,17 @@ class OrderDetailFragment : Fragment() {
                         }
                         viewModel.doneTextBtnClick()
                     }
-                    .setNegativeButton("취소") { _, _ ->
-                        viewModel.doneTextBtnClick()
-                    }
-                    .create()
-                    .show()
+                    .setNegativeButton("취소") { viewModel.doneTextBtnClick() }
+                    .show(requireActivity().supportFragmentManager, "rounded alert dialog")
             }
         })
+    }
+
+    private fun showExceptionDialog(e: Exception) {
+        RoundedAlertDialog()
+            .setMessage(e.message!!)
+            .setPositiveButton("확인", null)
+            .show(requireActivity().supportFragmentManager, "rounded alert dialog")
     }
 
     /**
@@ -135,9 +146,9 @@ class OrderDetailFragment : Fragment() {
     private fun setCallBtnObserver() {
         viewModel.isCallBtnClick.observe(viewLifecycleOwner, Observer { clicked ->
             if (clicked) {
-                AlertDialog.Builder(requireContext())
+                RoundedAlertDialog()
                     .setMessage("주문자에게 전화를 거시겠습니까?")
-                    .setPositiveButton("확인") { _, _ ->
+                    .setPositiveButton("확인") {
                         CoroutineScope(Dispatchers.IO).launch {
                             val customerUid = viewModel.getCustomerUid()
                             val deferredPhone = async { repository.getCustomerPhone(customerUid) }
@@ -147,11 +158,8 @@ class OrderDetailFragment : Fragment() {
                         }
                         viewModel.doneCallBtnClick()
                     }
-                    .setNegativeButton("취소") { _, _ ->
-                        viewModel.doneCallBtnClick()
-                    }
-                    .create()
-                    .show()
+                    .setNegativeButton("취소") { viewModel.doneCallBtnClick() }
+                    .show(requireActivity().supportFragmentManager, "rounded alert dialog")
             }
         })
     }
@@ -159,21 +167,25 @@ class OrderDetailFragment : Fragment() {
     private fun setPickupCompleteBtnObserver() {
         viewModel.isPickupCompleteBtnClick.observe(viewLifecycleOwner, Observer { clicked ->
             if (clicked) {
-                AlertDialog.Builder(requireContext())
-                    .setMessage("픽업 완료를 처리하시겠습니까?\n가격은 다시 바꿀 수 없습니다.")
-                    .setPositiveButton("확인") { _, _ ->
-                        viewModel.completePickup()
-                        viewModel.donePickupCompleteBtnClick()
-                        binding.cvDestination.binding.btnPickupComplete.apply {
-                            isClickable = false
-                            text = "픽업 완료"
+                try {
+                    viewModel.checkCostInput()
+                    RoundedAlertDialog()
+                        .setMessage("픽업 완료 처리하시겠습니까?")
+                        .setPositiveButton("확인") {
+                            viewModel.completePickup()
+                            binding.cvDestination.binding.btnPickupComplete.apply {
+                                isClickable = false
+                                text = "픽업 완료"
+                            }
                         }
-                    }
-                    .setNegativeButton("취소") { _, _ ->
-                        viewModel.donePickupCompleteBtnClick()
-                    }
-                    .create()
-                    .show()
+                        .setNegativeButton("취소", null)
+                        .show(requireActivity().supportFragmentManager, "rounded alert dialog")
+
+                } catch (e: NotEnteredException) {
+                    showExceptionDialog(e)
+                } finally {
+                    viewModel.donePickupCompleteBtnClick()
+                }
             }
         })
     }
@@ -181,21 +193,24 @@ class OrderDetailFragment : Fragment() {
     private fun setDeliveryCompleteBtnObserver() {
         viewModel.isDeliveryCompleteBtnClick.observe(viewLifecycleOwner, Observer { clicked ->
             if (clicked) {
-                AlertDialog.Builder(requireContext())
-                    .setMessage("배달 완료를 처리하시겠습니까?")
-                    .setPositiveButton("확인") { _, _ ->
-                        viewModel.completeDelivery()
-                        viewModel.doneDeliveryCompleteBtnClick()
-                        binding.cvDestination.binding.btnDeliveryComplete.apply {
-                            isClickable = false
-                            text = "배달 완료"
+                try {
+                    viewModel.checkStatus()
+                    RoundedAlertDialog()
+                        .setMessage("배달 완료 처리하시겠습니까?")
+                        .setPositiveButton("확인") {
+                            viewModel.completeDelivery()
+                            binding.cvDestination.binding.btnDeliveryComplete.apply {
+                                isClickable = false
+                                text = "배달 완료"
+                            }
                         }
-                    }
-                    .setNegativeButton("취소") { _, _ ->
-                        viewModel.donePickupCompleteBtnClick()
-                    }
-                    .create()
-                    .show()
+                        .setNegativeButton("취소", null)
+                        .show(requireActivity().supportFragmentManager, "rounded alert dialog")
+                } catch (e: StatusException) {
+                    showExceptionDialog(e)
+                } finally {
+                    viewModel.doneDeliveryCompleteBtnClick()
+                }
             }
         })
     }

@@ -3,6 +3,7 @@ package com.santaistiger.gomourdeliveryapp.data.network.database
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -11,7 +12,6 @@ import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderListAdapter
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
 
 
 private const val TAG: String = "FirebaseApiService"
@@ -36,7 +36,6 @@ object RealtimeApi {
         }
         return response
     }
-
 
     fun updateOrder(key: String, order: Order) {
         orderTable.child(key).setValue(order)

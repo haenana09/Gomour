@@ -1,19 +1,31 @@
 package com.santaistiger.gomourdeliveryapp.ui.adapter
 
-import android.text.InputType
-import android.text.SpannableStringBuilder
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.santaistiger.gomourdeliveryapp.R
+import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.model.Store
-import com.santaistiger.gomourdeliveryapp.databinding.ItemStoreBinding
+import com.santaistiger.gomourdeliveryapp.data.repository.Repository
+import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
+import com.santaistiger.gomourdeliveryapp.databinding.DialogInputCostBinding
+import com.santaistiger.gomourdeliveryapp.databinding.ItemDetailStoreBinding
 
-class OrderDetailStoreAdapter : RecyclerView.Adapter<OrderDetailStoreAdapter.ViewHolder>() {
-    val TAG = "StoreAdapter"
+class OrderDetailStoreAdapter(var order: Order) :
+    RecyclerView.Adapter<OrderDetailStoreAdapter.ViewHolder>() {
+    companion object {
+        private const val TAG = "StoreAdapter"
+    }
+
     var items = ArrayList<Store>()
+    private val repository: Repository = RepositoryImpl
 
     override fun getItemCount(): Int = items.size
 
@@ -31,28 +43,43 @@ class OrderDetailStoreAdapter : RecyclerView.Adapter<OrderDetailStoreAdapter.Vie
      * 상품 가격 입력하는 다이얼로그 띄우는 함수
      */
     private fun inputPrice(it: View, position: Int) {
-        val editText = EditText(it.context).apply {
-            inputType = InputType.TYPE_CLASS_NUMBER
-            text = if (items[position].cost != null) {
-                SpannableStringBuilder(items[position].cost.toString())
-            } else {
-                SpannableStringBuilder(String())
-            }
-        }
+        val width = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 250.toFloat(), it.resources.displayMetrics
+        )
 
-        AlertDialog.Builder(it.context)
-            .setTitle("해당 가게의 물품 가격을 입력하세요")
-            .setView(editText)
-            .setPositiveButton("확인") { _, _ ->
-                items[position].cost = editText.text.toString().toInt()
-                notifyDataSetChanged()
+        val binding = DataBindingUtil.inflate<DialogInputCostBinding>(
+            LayoutInflater.from(it.context),
+            R.layout.dialog_input_cost,
+            null, false
+        )
+
+        val dialog: AlertDialog = AlertDialog.Builder(it.context)
+            .setView(binding.root)
+            .create().apply {
+                show()
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                window?.setLayout(width.toInt(), WindowManager.LayoutParams.WRAP_CONTENT)
             }
-            .setNegativeButton("취소", null)
-            .create()
-            .show()
+
+        setOnClickListener(binding, position, dialog)
     }
 
-    class ViewHolder private constructor(val viewBinding: ItemStoreBinding) :
+    private fun setOnClickListener(
+        binding: DialogInputCostBinding,
+        position: Int,
+        dialog: AlertDialog
+    ) {
+        binding.btnPositive.setOnClickListener {
+            items[position].cost = binding.etCost.text.toString().toInt()
+            repository.updateOrder(order)
+            notifyDataSetChanged()
+            dialog.dismiss()
+        }
+        binding.btnNegative.setOnClickListener { dialog.dismiss() }
+    }
+
+
+    class ViewHolder private constructor(val viewBinding: ItemDetailStoreBinding) :
         RecyclerView.ViewHolder(viewBinding.root) {
 
         fun bind(item: Store) {
@@ -63,7 +90,7 @@ class OrderDetailStoreAdapter : RecyclerView.Adapter<OrderDetailStoreAdapter.Vie
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ItemStoreBinding.inflate(layoutInflater, parent, false)
+                val binding = ItemDetailStoreBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }
