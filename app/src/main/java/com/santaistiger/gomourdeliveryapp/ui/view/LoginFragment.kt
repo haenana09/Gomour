@@ -60,6 +60,16 @@ class LoginFragment: Fragment(){
             signIn(email,password)
         }
 
+        // 이메일 포커스
+        binding.emailLogin.setOnFocusChangeListener { v, hasFocus ->
+            if(hasFocus){
+                binding.emailLoginLinearLayout.setBackgroundResource(R.drawable.edittext_focus)
+            }
+            else{
+                binding.emailLoginLinearLayout.setBackgroundResource(R.drawable.edittext_basic)
+            }
+        }
+
 
         // 회워가입 누르면 회원가입페이지로 이동
         binding.goSignUpPage.setOnClickListener{

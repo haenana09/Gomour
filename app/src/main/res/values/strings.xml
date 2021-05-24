@@ -22,4 +22,17 @@
     <string name="order_request_title">새로운 요청</string>
     <string name="order_request_no">거절</string>
     <string name="order_request_yes">수락</string>
+
+    <!-- 회원가입 관련 resource -->
+    <string name = "dankook_domain">@ dankook.ac.kr</string>
+    <string name="join_student_id_info">※ 배달원 등록은 단국대학교 학생만 가능합니다.\n학생증을 아래와 같이 찍어 업로드하면 일주일 내로 확인 후 등록 완료 됩니다.</string>
+
+    <!-- 회원정보 수정 관련 resource -->
+    <string name = "modify_password_info">비밀번호 변경 시에만 입력하세요.</string>
+    <string name = "withdrwal_button">회    원    탈    퇴</string>
+    <string name = "password_star">********</string>
+
+    <!-- 로딩 화면 관련 resource -->
+    <string name = "app_title">곰아워</string>
+    <string name = "app_version">\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t배달원용</string>
 </resources>

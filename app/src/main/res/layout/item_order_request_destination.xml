@@ -20,6 +20,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:padding="8dp"
+                android:tint="@color/main"
                 app:srcCompat="@drawable/destination" />
 
             <androidx.appcompat.widget.AppCompatTextView

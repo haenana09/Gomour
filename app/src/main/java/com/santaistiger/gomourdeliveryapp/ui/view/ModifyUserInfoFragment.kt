@@ -51,16 +51,18 @@ class ModifyUserInfoFragment: Fragment() {
             R.layout.fragment_modify_user_info,container,false)
         viewModel = ViewModelProvider(this).get(ModifyUserInfoViewModel::class.java)
         val currentUser = auth?.currentUser
-
+        var password:String = ""
+        var passwordCheck:String = ""
         if (currentUser != null) {
             val docRef = db.collection("deliveryMan").document(currentUser.uid)
             docRef.get().addOnSuccessListener { documentSnapshot ->
                 val data = documentSnapshot.toObject<DeliveryMan>()
                 if (data != null) {
+                    password = data.password.toString()
+                    passwordCheck = data.password.toString()
+
                     binding.nameModify.text = data.name
                     binding.emailModify.text = data.email
-                    binding.passwordModify.setText(data.password)
-                    binding.passwordCheckModify.setText(data.password)
                     binding.phoneModify.setText(data.phone)
                     binding.bankModify.setText(data.accountInfo?.bank)
                     binding.accountModify.setText(data.accountInfo?.account)
@@ -72,10 +74,41 @@ class ModifyUserInfoFragment: Fragment() {
             binding.passwordCheckModify.addTextChangedListener(passwordCheckChangeWatcher)
             binding.passwordModify.addTextChangedListener(passwordChangeWatcher)
 
+            //은행명 포커스
+            binding.bankModify.setOnFocusChangeListener { v, hasFocus ->
+                if(hasFocus){
+                    binding.modifyAccountLinearLayout.setBackgroundResource(R.drawable.edittext_focus)
+                }
+                else{
+                    binding.modifyAccountLinearLayout.setBackgroundResource(R.drawable.edittext_basic)
+                }
+            }
+
+            //계좌번호 포커스
+            binding.accountModify.setOnFocusChangeListener { v, hasFocus ->
+                if(hasFocus){
+                    binding.modifyAccountLinearLayout.setBackgroundResource(R.drawable.edittext_focus)
+                }
+                else{
+                    binding.modifyAccountLinearLayout.setBackgroundResource(R.drawable.edittext_basic)
+                }
+            }
+
+
+
+
+
+
+
             // 변경완료 버튼 클릭 시
             binding.modifyButton.setOnClickListener{
-                val password:String =binding.passwordModify.text.toString()
-                val passwordCheck: String  = binding.passwordCheckModify.text.toString()
+                if(binding.passwordModify.toString() == "" && binding.passwordCheckModify.toString() ==""){
+                    // 변경사항 없음
+                }
+                else{
+                    password =binding.passwordModify.text.toString()
+                    passwordCheck  = binding.passwordCheckModify.text.toString()
+                }
 
                 if (passwordCheck(passwordCheck) && password(password)){
                     modifyUser()

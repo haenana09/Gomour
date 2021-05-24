@@ -74,6 +74,38 @@ class JoinFragment: Fragment() {
             accountEditText.addTextChangedListener(mTextWatcher)
             bankEditText.addTextChangedListener(mTextWatcher)
             imageFileText.addTextChangedListener(mTextWatcher)
+
+
+            //이메일 포커스
+            emailEditText.setOnFocusChangeListener { v, hasFocus ->
+                if(hasFocus){
+                    binding.emailLinearLayout.setBackgroundResource(R.drawable.edittext_focus)
+                }
+                else{
+                    binding.emailLinearLayout.setBackgroundResource(R.drawable.edittext_basic)
+                }
+            }
+
+            //은행명 포커스
+            bankEditText.setOnFocusChangeListener { v, hasFocus ->
+                if(hasFocus){
+                    binding.accountLinearLayout.setBackgroundResource(R.drawable.edittext_focus)
+                }
+                else{
+                    binding.accountLinearLayout.setBackgroundResource(R.drawable.edittext_basic)
+                }
+            }
+
+            //계좌번호 포커스
+            accountEditText.setOnFocusChangeListener { v, hasFocus ->
+                if(hasFocus){
+                    binding.accountLinearLayout.setBackgroundResource(R.drawable.edittext_focus)
+                }
+                else{
+                    binding.accountLinearLayout.setBackgroundResource(R.drawable.edittext_basic)
+                }
+            }
+
         }
 
 
