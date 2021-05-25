@@ -9,11 +9,14 @@ import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
@@ -30,6 +33,7 @@ import com.santaistiger.gomourdeliveryapp.data.model.OrderRequest
 import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
+import com.santaistiger.gomourdeliveryapp.databinding.ActivityBaseBinding
 import com.santaistiger.gomourdeliveryapp.ui.view.OrderRequestFragment
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.dialog_deliverytime.*
@@ -44,6 +48,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val database = Firebase.database
     val databaseReference: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
     private val repository: Repository = RepositoryImpl
+    private lateinit var binding: ActivityBaseBinding
 
     // reqltimeDB에서 받아온 주문 리스트
     var order_request_list = ArrayList<OrderRequest>()
@@ -72,7 +77,15 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_base)
+
+        binding = DataBindingUtil.inflate(
+            layoutInflater,
+            R.layout.activity_base,
+            null,
+            false
+        )
+
+        setContentView(binding.root)
 
         //  order_request_list에 요소 추가하는 리스너
         val listener: DataListener = object : DataListener {
@@ -129,6 +142,23 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             setDisplayHomeAsUpEnabled(true)   // 툴바 홈버튼 활성화
             setHomeAsUpIndicator(R.drawable.hamburger_btn)     // 홈버튼 이미지 변경
             setDisplayShowTitleEnabled(false)     // 툴바에 앱 타이틀 보이지 않도록 설정
+        }
+    }
+
+    /** 각 fragment의 툴바를 설정하는 함수 */
+    fun setToolbar(context: Context, isVisible: Boolean, title: String?, isSwapable: Boolean) {
+        context.apply {
+            val swapable = when (isSwapable) {
+                true -> DrawerLayout.LOCK_MODE_UNLOCKED
+                false -> DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+            }
+
+            toolbar.visibility = when (isVisible) {
+                true -> View.VISIBLE
+                false -> View.GONE
+            }
+            binding.toolbarTitle.text = title ?: String()
+            binding.drawerLayout.setDrawerLockMode(swapable)
         }
     }
 

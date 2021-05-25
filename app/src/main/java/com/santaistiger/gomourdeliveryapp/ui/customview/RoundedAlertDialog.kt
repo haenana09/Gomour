@@ -1,9 +1,11 @@
+/**
+ * created by Kang Gumsil
+ */
 package com.santaistiger.gomourdeliveryapp.ui.customview
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +15,16 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.databinding.DialogRoundedAlertBinding
+import com.santaistiger.gomourdeliveryapp.utils.toDp
 
 class RoundedAlertDialog() : DialogFragment() {
+    companion object {
+        private const val MAX_SIZE = 300
+        private const val MIN_SIZE = 120
+        private const val FONT_SIZE = 14
+        private const val PADDING_SIZE = 50
+    }
+
     private lateinit var binding: DialogRoundedAlertBinding
     private lateinit var message: String
     private var positiveBtnProperty: DialogBtnProperty? = null
@@ -33,7 +43,6 @@ class RoundedAlertDialog() : DialogFragment() {
             false
         )
 
-
         binding.tvMessage.text = message
         if (positiveBtnProperty != null) {
             binding.btnPositive.text = positiveBtnProperty!!.text
@@ -50,15 +59,17 @@ class RoundedAlertDialog() : DialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        val size = message.length * 14 + 50
-        val width = clamp(size, 120, 300)
+        val size = message.length * FONT_SIZE + PADDING_SIZE
+        val width = clamp(size, MIN_SIZE, MAX_SIZE)
 
         dialog?.window?.apply {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            setLayout(toDp(width), WindowManager.LayoutParams.WRAP_CONTENT)
+            setLayout(
+                toDp(resources.displayMetrics, width),
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
         }
     }
-
 
     fun setMessage(text: String): RoundedAlertDialog {
         message = text
@@ -82,9 +93,4 @@ class RoundedAlertDialog() : DialogFragment() {
     }
 
     data class DialogBtnProperty(val text: String, val listener: View.OnClickListener?)
-
-    private fun toDp(px: Int): Int {
-        val metrics = resources.displayMetrics
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, px.toFloat(), metrics).toInt()
-    }
 }

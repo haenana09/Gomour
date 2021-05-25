@@ -3,7 +3,6 @@ package com.santaistiger.gomourdeliveryapp.data.network.database
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -14,12 +13,11 @@ import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderListAdapter
 import kotlinx.coroutines.tasks.await
 
 
-private const val TAG: String = "FirebaseApiService"
-private const val ORDER_REQUEST_TABLE = "order_request"
-private const val ORDER_TABLE = "order"
-
-
 object RealtimeApi {
+    private const val TAG: String = "FirebaseApiService"
+    private const val ORDER_REQUEST_TABLE = "order_request"
+    private const val ORDER_TABLE = "order"
+
     private val database = Firebase.database
     private val orderRequestTable = database.getReference(ORDER_REQUEST_TABLE)
     private val orderTable = database.getReference(ORDER_TABLE)
