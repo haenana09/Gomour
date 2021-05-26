@@ -1,5 +1,7 @@
 package com.santaistiger.gomourdeliveryapp.ui.view
-
+/**
+ * Created by Jangeunhye
+ */
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*

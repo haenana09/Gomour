@@ -1,4 +1,5 @@
 package com.santaistiger.gomourdeliveryapp.ui.view
+
 /**
  * Created by Jangeunhye
  */
@@ -7,7 +8,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,22 +24,22 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
+import com.santaistiger.gomourdeliveryapp.data.repository.Repository
+import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentLoginBinding
 import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.fragment_join.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
-class LoginFragment: Fragment(){
+class LoginFragment : Fragment() {
 
     private var auth: FirebaseAuth? = null
     private lateinit var binding: FragmentLoginBinding
     private lateinit var viewModel: LoginViewModel
-
+    private val repository: Repository = RepositoryImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,8 +50,10 @@ class LoginFragment: Fragment(){
         setToolbar()
 
         auth = Firebase.auth
-        binding = DataBindingUtil.inflate<FragmentLoginBinding>(inflater,
-            R.layout.fragment_login,container,false)
+        binding = DataBindingUtil.inflate<FragmentLoginBinding>(
+            inflater,
+            R.layout.fragment_login, container, false
+        )
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         // 빈칸 감지
@@ -59,17 +61,32 @@ class LoginFragment: Fragment(){
         binding.passwordLogin.addTextChangedListener(mTextWatcher)
 
         // 로그인 버튼 눌렀을 때
-        binding.loginButton.setOnClickListener{
-            viewModel.email = binding.emailLogin.text.toString()
+        binding.loginButton.setOnClickListener {
+            viewModel.email = binding.emailLogin.text.toString() + "@dankook.ac.kr"
             viewModel.password = binding.passwordLogin.text.toString()
             CoroutineScope(Dispatchers.IO).launch {
-                viewModel.login().join()
-                if (viewModel.loginInfo.value != null) { // 로그인 성공 시
-                    findNavController().navigate(R.id.action_loginFragment_to_orderListFragment)
-                    (requireActivity() as BaseActivity).setNavigationDrawerHeader()
-                } else { // 로그인 실패 시
-                    launch(Dispatchers.Main) {
-                        alertCancel(this@LoginFragment.requireContext())
+
+                // 로그인 전
+                if (repository.getUid().isNullOrEmpty()) {
+                    viewModel.login().join()
+
+                    if (viewModel.loginInfo.value != null) { // 로그인 성공 시
+                        val deliveryMan =
+                            withContext(Dispatchers.Default) { repository.readDeliveryManInfo() }
+                        if (deliveryMan!!.isCertified) { // 학생증 인증 완료시
+                            setSharedPreferences()
+                            findNavController().navigate(R.id.action_loginFragment_to_orderListFragment)
+                            (requireActivity() as BaseActivity).setNavigationDrawerHeader()
+                        } else { // 학생증 인증 전
+                            launch(Dispatchers.Main) {
+                                showToast("학생증 인증을 기다리세요")
+                            }
+                        }
+
+                    } else { // 로그인 실패 시
+                        launch(Dispatchers.Main) {
+                            alertCancel(this@LoginFragment.requireContext())
+                        }
                     }
                 }
             }
@@ -77,21 +94,34 @@ class LoginFragment: Fragment(){
 
         // 이메일 포커스
         binding.emailLogin.setOnFocusChangeListener { v, hasFocus ->
-            if(hasFocus){
+            if (hasFocus) {
                 binding.emailLoginLinearLayout.setBackgroundResource(R.drawable.edittext_focus)
-            }
-            else{
+            } else {
                 binding.emailLoginLinearLayout.setBackgroundResource(R.drawable.edittext_basic)
             }
         }
 
 
         // 회워가입 누르면 회원가입페이지로 이동
-        binding.goSignUpPage.setOnClickListener{
+        binding.goSignUpPage.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_joinFragment)
         }
 
         return binding.root
+    }
+
+    private fun setSharedPreferences() {
+
+        val auto = requireActivity()
+            .getSharedPreferences("auto", Context.MODE_PRIVATE)
+        val autoLogin = auto.edit()
+        autoLogin.putString("email", viewModel.email)
+        autoLogin.putString("password", viewModel.password)
+        autoLogin.commit()
+    }
+
+    private fun showToast(msg: String) {
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
 
 
@@ -121,59 +151,60 @@ class LoginFragment: Fragment(){
     }
 
     // 로그인
-    private fun signIn(email:String, password:String){
-            auth?.signInWithEmailAndPassword(email, password)
-                ?.addOnCompleteListener(){ task ->
-                    if(task.isSuccessful){
+    private fun signIn(email: String, password: String) {
+        auth?.signInWithEmailAndPassword(email, password)
+            ?.addOnCompleteListener() { task ->
+                if (task.isSuccessful) {
 
-                        //파이어스토어에서 인증상태 확인
-                        val user = auth!!.currentUser
-                        val db = Firebase.firestore
-                        val docRef = db.collection("deliveryMan").document(user.uid)
-                        docRef.get().addOnSuccessListener { documentSnapshot ->
-                            val data = documentSnapshot.toObject<DeliveryMan>()
-                            if (data != null) {
+                    //파이어스토어에서 인증상태 확인
+                    val user = auth!!.currentUser
+                    val db = Firebase.firestore
+                    val docRef = db.collection("deliveryMan").document(user.uid)
+                    docRef.get().addOnSuccessListener { documentSnapshot ->
+                        val data = documentSnapshot.toObject<DeliveryMan>()
+                        if (data != null) {
 
-                                //학생증 인증이 완료된 상태 - 로그인 가능
-                                if(data.isCertified){
+                            //학생증 인증이 완료된 상태 - 로그인 가능
+                            if (data.isCertified) {
 
-                                    db.collection("deliveryMan")
-                                    val auto = this.requireActivity()
-                                        .getSharedPreferences("auto", Context.MODE_PRIVATE)
-                                    val autoLogin = auto.edit()
-                                    autoLogin.putString("email",email)
-                                    autoLogin.putString("password",password)
-                                    autoLogin.commit()
+                                db.collection("deliveryMan")
+                                val auto = this.requireActivity()
+                                    .getSharedPreferences("auto", Context.MODE_PRIVATE)
+                                val autoLogin = auto.edit()
+                                autoLogin.putString("email", email)
+                                autoLogin.putString("password", password)
+                                autoLogin.commit()
 
-                                    // 주문 목록 페이지로 이동
-                                    findNavController().navigate(R.id.action_loginFragment_to_orderListFragment)
-                                    (activity as BaseActivity).setNavigationDrawerHeader()  // 네비게이션 드로어 헤더 설정
-                                }
-                                else{
-                                    //학생증인증이 안되었을 때
-                                    Toast.makeText(context,R.string.login_student_id_info,Toast.LENGTH_LONG).show()
-                                }
+                                // 주문 목록 페이지로 이동
+                                findNavController().navigate(R.id.action_loginFragment_to_orderListFragment)
+                                (activity as BaseActivity).setNavigationDrawerHeader()  // 네비게이션 드로어 헤더 설정
+                            } else {
+                                //학생증인증이 안되었을 때
+                                Toast.makeText(
+                                    context,
+                                    R.string.login_student_id_info,
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     }
                 }
+            }
 
-                ?.addOnFailureListener {
-                    // 해당 정보가 없을 때
-                    alertCancel(requireContext())
-                }
-        }
+            ?.addOnFailureListener {
+                // 해당 정보가 없을 때
+                alertCancel(requireContext())
+            }
+    }
 
 
     fun alertCancel(context: Context) {
         AlertDialog.Builder(context)
             .setMessage(R.string.login_fail_dialog)
-            .setPositiveButton(R.string.login_fail_ok,null)
+            .setPositiveButton(R.string.login_fail_ok, null)
             .create()
             .show()
     }
-
-
 
 
 }

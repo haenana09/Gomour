@@ -67,6 +67,7 @@
             android:ems="10"
             android:inputType="phone"
             android:paddingLeft="15dp"
+            android:maxLength="11"
             android:textSize="14dp" />
 
         <LinearLayout

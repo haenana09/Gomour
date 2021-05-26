@@ -24,7 +24,7 @@
     <string name="order_request_yes">수락</string>
 
     <!-- 회원가입 관련 resource -->
-    <string name = "dankook_domain">@ dankook.ac.kr</string>
+    <string name = "dankook_domain">\@dankook.ac.kr</string>
     <string name="join_student_id_info">※ 배달원 등록은 단국대학교 학생만 가능합니다.\n학생증을 아래와 같이 찍어 업로드하면 일주일 내로 확인 후 등록 완료 됩니다.</string>
     <string name = "join_finish_info">학생증 인증을 기다리세요.</string>
     <string name = "join_email_duplicate_check">중복확인</string>
@@ -32,6 +32,9 @@
     <string name = "join_email_duplicate_info">이미 사용 중인 이메일입니다.</string>
     <string name = "join_email_available_info">사용 가능한 이메일입니다.</string>
     <string name = "join_email_form_info">이메일 형식이 아닙니다.</string>
+    <string name ="join_email_check_info">이메일 중복 검사를 수행하세요.</string>
+    <string name = "join_fail_info">회원가입에 실패하였습니다.</string>
+
 
     <!-- 회원가입 및 회원정보 관련 resource -->
     <string name = "password_available_info">사용 가능한 비밀번호입니다.</string>
@@ -54,4 +57,13 @@
     <string name = "login_fail_dialog">로그인에 실패하였습니다.</string>
     <string name = "login_fail_ok">확인</string>
 
+    <!-- 회원정보 수정 관련 resource -->
+    <string name = "modify_confirm">완료</string>
+    <string name="withdrawal_dialog">정말 탈퇴하시겠습니까?</string>
+    <string name="withdrawal_yes">네</string>
+    <string name ="withdrawal_no">아니오</string>
+    <string name="modify_success">회원정보 변경 성공</string>
+    <string name="modify_fail">회원정보 변경 실패</string>
+    <string name="withdrawal_fail">탈퇴 실패</string>
+    <string name="withdrawal_success">탈퇴 성공</string>
 </resources>

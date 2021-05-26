@@ -1,5 +1,7 @@
 package com.santaistiger.gomourdeliveryapp.ui.viewmodel
-
+/**
+ * Created by Jangeunhye
+ */
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
