@@ -197,6 +197,7 @@ class OrderDetailFragment : Fragment() {
                         }
                         .setNegativeButton(resources.getString(R.string.cancel), null)
                         .show(requireActivity().supportFragmentManager, "rounded alert dialog")
+                    (requireActivity() as BaseActivity).currentOrder = null
                 } catch (e: StatusException) {
                     showExceptionDialog(e)
                 } finally {

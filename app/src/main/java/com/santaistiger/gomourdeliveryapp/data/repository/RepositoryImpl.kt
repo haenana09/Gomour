@@ -4,10 +4,8 @@ import android.widget.TextView
 import com.google.firebase.database.Query
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.network.database.AuthApi
-import com.santaistiger.gomourdeliveryapp.data.network.database.RealtimeApi
-import com.santaistiger.gomourdeliveryapp.data.network.firebase.FireStoreApi
-import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderListAdapter
 import com.santaistiger.gomourdeliveryapp.data.network.database.FireStoreApi
+import com.santaistiger.gomourdeliveryapp.data.network.database.RealtimeApi
 
 object RepositoryImpl : Repository {
     override suspend fun getOrderDetail(orderId: String): Order? {

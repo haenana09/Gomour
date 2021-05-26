@@ -34,6 +34,7 @@ import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.ActivityBaseBinding
+import com.santaistiger.gomourdeliveryapp.ui.customview.RoundedAlertDialog
 import com.santaistiger.gomourdeliveryapp.ui.view.OrderRequestFragment
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.dialog_deliverytime.*
@@ -51,7 +52,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var binding: ActivityBaseBinding
 
     // 배달원의 최근 주문
-    var recentOrder: Order? = null
+    var currentOrder: Order? = null
 
     // reqltimeDB에서 받아온 주문 리스트
     var order_request_list = ArrayList<OrderRequest>()
@@ -195,13 +196,12 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         get_order_status_switch.setOnCheckedChangeListener { _, isChecked ->
 
             if (isChecked) {    // 주문 받기 스위치 on으로 변경
-                if (recentOrder != null && recentOrder!!.status != Status.DELIVERY_COMPLETE) {
-                    androidx.appcompat.app.AlertDialog.Builder(this@BaseActivity)
+                if (currentOrder != null && currentOrder!!.status != Status.DELIVERY_COMPLETE) {
+                    RoundedAlertDialog()
                         .setMessage("현재 배달중인 주문이 있어 배달 완료 전까지 주문 받기 상태를 ON으로 변경할 수 없습니다.")
                         .setPositiveButton("확인", null)
-                        .create()
-                        .show()
-                    get_order_status_switch.setChecked(false)   // 주문 받기 스위치 off로 설정
+                        .show(supportFragmentManager, "rounded alert dialog")
+                    get_order_status_switch.isChecked = false   // 주문 받기 스위치 off로 설정
 
                 } else {
                     Log.d(TAG, "주문 받기 on")

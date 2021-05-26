@@ -1,5 +1,3 @@
-// 배달원 - mvvm 적용 orderlist
-
 package com.santaistiger.gomourdeliveryapp.ui.view
 
 /**
@@ -74,10 +72,10 @@ class OrderListFragment : Fragment() {
                 adapter.notifyDataSetChanged()
 
                 emptyNoticeTextView.visibility = View.GONE     // 빈 리싸이클러뷰 안내 문구 숨김
-                (activity as BaseActivity).recentOrder = orders.last()   // 최근 주문의 배달 상태 설정
+                (activity as BaseActivity).currentOrder = orders.last()   // 최근 주문의 배달 상태 설정
             } else {
                 emptyNoticeTextView.visibility = View.VISIBLE  // 빈 리싸이클러뷰 안내 문구 표시
-                (activity as BaseActivity).recentOrder = null   // 최근 주문의 배달 상태 설정
+                (activity as BaseActivity).currentOrder = null   // 최근 주문의 배달 상태 설정
             }
         })
 

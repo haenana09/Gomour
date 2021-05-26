@@ -1,5 +1,3 @@
-// 배달원 - mvvm 적용 orderlist view
-
 package com.santaistiger.gomourdeliveryapp.ui.viewmodel
 
 /**
