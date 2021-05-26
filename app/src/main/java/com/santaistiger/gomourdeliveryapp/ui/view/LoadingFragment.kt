@@ -1,5 +1,7 @@
 package com.santaistiger.gomourdeliveryapp.ui.view
-
+/**
+ * Created by Jangeunhye
+ */
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
@@ -15,7 +17,10 @@ import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_base.*
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoadingFragment: Fragment() {
 
@@ -37,34 +42,28 @@ class LoadingFragment: Fragment() {
         }
     }
 
-    //2초 딜레이
+    // 1.5초 대기
     private fun startLoading() {
-        val handler = Handler()
-        handler.postDelayed(Runnable {
-            auth()
-        }, 2000)
+        CoroutineScope(Dispatchers.IO).launch {
+            delay(1500)
+            auth().join()
+        }
     }
 
-    private fun auth() {
-        var auth = Firebase.auth
-
-        // shared preference에 로그인 정보 있는지 확인
-        val auto = this.requireActivity().getSharedPreferences("auto", Context.MODE_PRIVATE)
+    private fun auth() = CoroutineScope(Dispatchers.IO).launch {
+        val auto = requireActivity().getSharedPreferences("auto", Context.MODE_PRIVATE)
         val loginEmail = auto.getString("email", null)
         val loginPwd = auto.getString("password", null)
         if (loginEmail != null && loginPwd != null) {
-            auth = Firebase.auth
-            auth?.signInWithEmailAndPassword(loginEmail, loginPwd)?.addOnSuccessListener {
+            Firebase.auth?.signInWithEmailAndPassword(loginEmail, loginPwd)?.addOnSuccessListener {
                 findNavController().navigate(R.id.action_loadingFragment_to_orderListFragment)
                 (activity as BaseActivity).setNavigationDrawerHeader()  // 네비게이션 드로어 헤더 설정
-                Toast.makeText(context, "안녕", Toast.LENGTH_LONG).show()
             }
         }
         else {
-            // 로그인 페이지로 이동
+            // 저장된 로그인 정보가 없을 시 로그인 페이지로 이동
             findNavController().navigate(R.id.action_loadingFragment_to_loginFragment)
         }
-
     }
 
 }
