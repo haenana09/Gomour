@@ -161,10 +161,12 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val item = navigation_view.menu.findItem(R.id.getOrderStatus)
         val get_order_status_switch =
             item.actionView.findViewById<Switch>(R.id.get_order_status_switch)
+
         get_order_status_switch.setOnCheckedChangeListener(object :
             CompoundButton.OnCheckedChangeListener {
             override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
                 if (isChecked) {    // 주문 받기 스위치 on으로 변경
+
                     if (recentOrder.status != Status.DELIVERY_COMPLETE) {     // 현재 배달중인 주문이 있을 경우
                         androidx.appcompat.app.AlertDialog.Builder(this@BaseActivity)
                             .setMessage("현재 배달중인 주문이 있어 배달 완료 전까지 주문 받기 상태를 ON으로 변경할 수 없습니다.")

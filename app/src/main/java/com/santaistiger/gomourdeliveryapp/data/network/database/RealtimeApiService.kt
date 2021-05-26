@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.TextView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -43,40 +44,10 @@ object RealtimeApi {
         orderTable.child(key).setValue(order)
     }
 
-    // 배달원의 주문 목록 받아오기
-    fun readOrderList(deliveryManUid: String, adapter: OrderListAdapter, textView: TextView, recentOrder: Order) {
-        val orders = mutableListOf<Order>()
-        val ordersReference = orderTable.orderByChild("deliveryManUid").equalTo(deliveryManUid)
+    // realtime database의 order 테이블에 있는 배달원의 배달 주문 목록을 받아와 해당 값을 반환한다.
+    fun readOrderList(deliveryManUid: String): Query {
+        val orderList = orderTable.orderByChild("deliveryManUid").equalTo(deliveryManUid)
 
-        val ordersListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                orders.clear()
-                adapter.orders.clear()
-
-                if (dataSnapshot.exists()) {
-                    for (messageSnapshot in dataSnapshot.children) {
-                        val order: Order? = messageSnapshot.getValue(Order::class.java)
-                        if (order != null) {
-                            orders.add(order)
-                        }
-                    }
-
-                    // 최근 날짜 순으로 주문 목록 재배열 후 adapter의 orders에 할당
-                    adapter.orders = orders.asReversed()
-                    adapter.notifyDataSetChanged()
-
-                    textView.visibility = View.GONE     // 빈 리싸이클러뷰 안내 문구 숨김
-                    recentOrder.status = orders.last().status   // 최근 주문의 배달 상태 설정
-                } else {
-                    textView.visibility = View.VISIBLE  // 빈 리싸이클러뷰 안내 문구 표시
-                    recentOrder.status = Status.DELIVERY_COMPLETE   // 최근 주문의 배달 상태 설정
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException())
-            }
-        }
-        ordersReference.addValueEventListener(ordersListener)
+        return orderList
     }
 }
