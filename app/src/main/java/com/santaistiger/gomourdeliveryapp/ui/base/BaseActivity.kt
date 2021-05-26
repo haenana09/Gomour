@@ -9,11 +9,13 @@ import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.util.Log
 import android.view.MenuItem
-import android.widget.CompoundButton
+import android.view.View
 import android.widget.EditText
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
@@ -30,6 +32,9 @@ import com.santaistiger.gomourdeliveryapp.data.model.OrderRequest
 import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
+import com.santaistiger.gomourdeliveryapp.databinding.ActivityBaseBinding
+import com.santaistiger.gomourdeliveryapp.ui.customview.RoundedAlertDialog
+import com.santaistiger.gomourdeliveryapp.ui.view.OrderDetailFragment
 import com.santaistiger.gomourdeliveryapp.ui.view.OrderRequestFragment
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.dialog_deliverytime.*
@@ -44,6 +49,10 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     val database = Firebase.database
     val databaseReference: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
     private val repository: Repository = RepositoryImpl
+    private lateinit var binding: ActivityBaseBinding
+
+    // 배달원의 최근 주문
+    var currentOrder: Order? = null
 
     // reqltimeDB에서 받아온 주문 리스트
     var order_request_list = ArrayList<OrderRequest>()
@@ -72,7 +81,15 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_base)
+
+        binding = DataBindingUtil.inflate(
+            layoutInflater,
+            R.layout.activity_base,
+            null,
+            false
+        )
+
+        setContentView(binding.root)
 
         //  order_request_list에 요소 추가하는 리스너
         val listener: DataListener = object : DataListener {
@@ -132,10 +149,26 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    /** 각 fragment의 툴바를 설정하는 함수 */
+    fun setToolbar(context: Context, isVisible: Boolean, title: String?, isSwapable: Boolean) {
+        context.apply {
+            val swapable = when (isSwapable) {
+                true -> DrawerLayout.LOCK_MODE_UNLOCKED
+                false -> DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+            }
+
+            toolbar.visibility = when (isVisible) {
+                true -> View.VISIBLE
+                false -> View.GONE
+            }
+            binding.toolbarTitle.text = title ?: String()
+            binding.drawerLayout.setDrawerLockMode(swapable)
+        }
+    }
+
     // 네비게이션 드로어 헤더에 현재 로그인한 회원 정보 설정
     fun setNavigationDrawerHeader() {
         val tmpUid = repository.getUid()
-        Log.d(TAG, "uid: $tmpUid")
         val header = navigation_view.getHeaderView(0)
         val docRef = Firebase.firestore.collection("deliveryMan").document(tmpUid)
         docRef.get().addOnSuccessListener { documentSnapshot ->
@@ -154,43 +187,40 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // 주문 받기 스위치 설정
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun setGetOrderStatusSwitch(childEventListener: ChildEventListener) {
-        // 배달 진행 중인지 상태 표시
-        val isOnDelivery = false
 
         // 주문 받기 스위치 클릭 설정
         val item = navigation_view.menu.findItem(R.id.getOrderStatus)
         val get_order_status_switch =
             item.actionView.findViewById<Switch>(R.id.get_order_status_switch)
-        get_order_status_switch.setOnCheckedChangeListener(object :
-            CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-                if (isChecked) {    // 주문 받기 스위치 on으로 변경
-                    if (isOnDelivery) {     // 현재 배달중인 주문이 있을 경우
-                        androidx.appcompat.app.AlertDialog.Builder(this@BaseActivity)
-                            .setMessage("현재 배달중인 주문이 있어 배달 완료 전까지 주문 받기 상태를 ON으로 변경할 수 없습니다.")
-                            .setPositiveButton("확인", null)
-                            .create()
-                            .show()
 
-                        get_order_status_switch.setChecked(false)   // 주문 받기 스위치 off로 설정
-                    } else {
-                        Log.d(TAG, "주문 받기 on")
-                        order_request_list.clear()
-                        popUpState = 0 //주문받기 on을 누르면 팝업창 띄우도록 설정
-                        // 주문 받도록 설정
-                        myRef.addChildEventListener(childEventListener)
-                    }
-                } else {    // 주문 받기 스위치 off로 변경
-                    Log.d(TAG, "주문 받기 off")
+        get_order_status_switch.setOnCheckedChangeListener { _, isChecked ->
+
+            if (isChecked) {    // 주문 받기 스위치 on으로 변경
+                if (currentOrder != null && currentOrder!!.status != Status.DELIVERY_COMPLETE) {
+                    RoundedAlertDialog()
+                        .setMessage("현재 배달중인 주문이 있어 배달 완료 전까지 주문 받기 상태를 ON으로 변경할 수 없습니다.")
+                        .setPositiveButton("확인", null)
+                        .show(supportFragmentManager, "rounded alert dialog")
+                    get_order_status_switch.isChecked = false   // 주문 받기 스위치 off로 설정
+
+                } else {
+                    Log.d(TAG, "주문 받기 on")
                     order_request_list.clear()
-                    popUpState = 1 // 팝업창 못띄우도록 설정
-                    // 주문 더이상 받지 않도록 설정
-                    myRef.removeEventListener(childEventListener)
-                }
-            }
-        })
-    }
+                    popUpState = 0 //주문받기 on을 누르면 팝업창 띄우도록 설정
 
+                    // 주문 받도록 설정
+                    myRef.addChildEventListener(childEventListener)
+                }
+            } else {    // 주문 받기 스위치 off로 변경
+                Log.d(TAG, "주문 받기 off")
+                order_request_list.clear()
+                popUpState = 1 // 팝업창 못띄우도록 설정
+
+                // 주문 더이상 받지 않도록 설정
+                myRef.removeEventListener(childEventListener)
+            }
+        }
+    }
 
     // 주문 요청 리스트 받아오기 위한 인터페이스 선언
     interface DataListener {
@@ -265,6 +295,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     // 팝업창 띄우는 함수
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun sendValue(order_request: OrderRequest) {
         //다른 팝업창 못띄우게 상태 설정
         popUpState = 1
@@ -304,15 +335,23 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 myRef.child(it).get().addOnSuccessListener {
                     if (it.exists()) {
                         //popUpState =1
+
+                        // 주문 받기 스위치 off로 설정
                         val item = navigation_view.menu.findItem(R.id.getOrderStatus)
                         val get_order_status_switch =
                             item.actionView.findViewById<Switch>(R.id.get_order_status_switch)
-                        get_order_status_switch.setChecked(false)   // 주문 받기 스위치 off로 설정
+                        get_order_status_switch.setChecked(false)
+
+                        // 네비게이션 드로어 닫기
+                        drawer_layout.closeDrawers()
 
                         //realtimeDB Order테이블에 업로드
                         orderCreate(order_request, deliverytime)
                         //request_order테이블에서 데이터 삭제
                         order_request.orderId?.let { myRef.child(it).removeValue() }
+
+                        // 주문 번호를 넘겨주며 주문 상세 화면으로 이동
+                        nav_host_fragment.findNavController().navigate(R.id.orderDetailFragment, Bundle().apply{putString("orderId", order_request.orderId)})
                     } else {
                         // 이미 배정된 주문이거나, 주문자가 취소할 경우
                         alertCancel()

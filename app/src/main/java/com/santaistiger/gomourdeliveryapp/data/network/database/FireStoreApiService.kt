@@ -9,10 +9,14 @@ import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import kotlinx.coroutines.tasks.await
 
 object FireStoreApi {
-    private val TAG = "FireStoreApiService"
+    private const val TAG = "FireStoreApiService"
+    private const val CUSTOMER_TABLE = "customer"
+    private const val DELIVERY_MAN_TABLE = "deliveryMan"
+
     private val database = Firebase.firestore
-    private val customerTable = database.collection("customer")
-    private val deliveryManTable = database.collection("deliveryMan")
+    private val customerTable = database.collection(CUSTOMER_TABLE)
+    private val deliveryManTable = database.collection(DELIVERY_MAN_TABLE)
+
 
     suspend fun readCustomer(customerUid: String): CustomerResponse {
         val response = CustomerResponse()

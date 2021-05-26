@@ -7,7 +7,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.UploadTask
 import com.santaistiger.gomourdeliveryapp.data.model.AccountInfo
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
+import android.widget.TextView
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.Query
 import com.santaistiger.gomourdeliveryapp.data.model.Order
+import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderListAdapter
 
 interface Repository {
     suspend fun getOrderDetail(orderId: String): Order?
@@ -27,5 +31,5 @@ interface Repository {
     fun updateOrder(order: Order)
     fun getUid(): String
     fun uploadImage(file: Uri): UploadTask
-
+    fun readOrderList(deliveryManUid: String): Query
 }

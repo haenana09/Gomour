@@ -6,11 +6,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.UploadTask
 import com.santaistiger.gomourdeliveryapp.data.model.AccountInfo
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
+import android.widget.TextView
+import com.google.firebase.database.Query
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.network.database.AuthApi
+import com.santaistiger.gomourdeliveryapp.data.network.database.FireStoreApi
 import com.santaistiger.gomourdeliveryapp.data.network.database.RealtimeApi
 import com.santaistiger.gomourdeliveryapp.data.network.database.StorageApi
-import com.santaistiger.gomourdeliveryapp.data.network.database.FireStoreApi
+
 
 object RepositoryImpl : Repository {
     override suspend fun getOrderDetail(orderId: String): Order? {
@@ -91,4 +94,9 @@ object RepositoryImpl : Repository {
     override fun uploadImage(file: Uri): UploadTask =
         StorageApi.uploadImage(getUid(), file)
 
+    // realtime database의 order 테이블에 있는 배달원의 배달 주문 목록을 받아와 해당 값을 반환한다.
+    override fun readOrderList(deliveryManUid: String): Query {
+        val orderList = RealtimeApi.readOrderList(deliveryManUid)
+        return orderList
+    }
 }
