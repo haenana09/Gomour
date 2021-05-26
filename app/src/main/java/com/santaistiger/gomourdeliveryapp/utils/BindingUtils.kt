@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.model.Status
-import com.santaistiger.gomourdeliveryapp.ui.customview.DestinationView
-import com.santaistiger.gomourdeliveryapp.ui.customview.MessageView
-import com.santaistiger.gomourdeliveryapp.ui.customview.PriceView
+import com.santaistiger.gomourdeliveryapp.ui.customview.DetailDestinationView
+import com.santaistiger.gomourdeliveryapp.ui.customview.DetailMessageView
+import com.santaistiger.gomourdeliveryapp.ui.customview.DetailPriceView
 import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderDetailStoreAdapter
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -21,7 +21,7 @@ val TAG = "BindingUtils"
 object BindingUtils {
     val numberFormat = NumberFormat.getInstance()
 
-    @BindingAdapter("bind_store_list")
+    @BindingAdapter("bind_detail_store_list")
     @JvmStatic
     fun bindStoreList(recyclerView: RecyclerView, item: MutableLiveData<Order>) {
         if (item.value != null) {
@@ -31,16 +31,16 @@ object BindingUtils {
             if (recyclerView.adapter == null) {
                 recyclerView.layoutManager =
                     LinearLayoutManager(recyclerView.context)
-                recyclerView.adapter = OrderDetailStoreAdapter()
+                recyclerView.adapter = OrderDetailStoreAdapter(order)
             }
             (recyclerView.adapter as OrderDetailStoreAdapter).items = stores ?: ArrayList()
             recyclerView.adapter?.notifyDataSetChanged()
         }
     }
 
-    @BindingAdapter("bind_destination")
+    @BindingAdapter("bind_detail_destination")
     @JvmStatic
-    fun bindDestination(view: DestinationView, item: MutableLiveData<Order>) {
+    fun bindDestination(view: DetailDestinationView, item: MutableLiveData<Order>) {
         if (item.value != null) {
             val order = item.value!!
             view.binding.tvStoreAddress.text = order.destination?.getDisplayName()
@@ -64,17 +64,17 @@ object BindingUtils {
     }
 
 
-    @BindingAdapter("bind_message")
+    @BindingAdapter("bind_detail_message")
     @JvmStatic
-    fun bindMessage(view: MessageView, item: MutableLiveData<Order>) {
+    fun bindMessage(view: DetailMessageView, item: MutableLiveData<Order>) {
         if (item.value != null) {
             view.binding.tvMessage.text = item.value!!.message
         }
     }
 
-    @BindingAdapter("bind_price")
+    @BindingAdapter("bind_detail_price")
     @JvmStatic
-    fun bindPrice(view: PriceView, item: MutableLiveData<Order>) {
+    fun bindPrice(view: DetailPriceView, item: MutableLiveData<Order>) {
         if (item.value != null) {
             val order = item.value!!
             var price = order.deliveryCharge ?: 0
@@ -85,7 +85,7 @@ object BindingUtils {
         }
     }
 
-    @BindingAdapter("bind_delivery_time")
+    @BindingAdapter("bind_detail_delivery_time")
     @JvmStatic
     fun bindDeliveryTime(view: TextView, item: MutableLiveData<Order>) {
         if (item.value != null) {
@@ -98,7 +98,7 @@ object BindingUtils {
         }
     }
 
-    @BindingAdapter("bind_cost")
+    @BindingAdapter("bind_detail_cost")
     @JvmStatic
     fun bindCost(view: Button, item: Int?) {
         if (item != null) {

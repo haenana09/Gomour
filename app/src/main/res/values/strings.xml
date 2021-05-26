@@ -1,9 +1,34 @@
 <resources>
     <string name="app_name">곰아워 기사용</string>
-    <string name="title_do_order_fragment">주문 조회</string>
-    <string name="address_do_order_fragment">출발지 및 목적지</string>
-    <string name="message_do_order_fragment">배송 메시지</string>
-    <string name="price_do_order_fragment">비용</string>
+
+    <!-- 금실쓰 리소스 -->
+    <string name="lock_up_order">주문 조회</string>
+    <string name="ok">확인</string>
+    <string name="cancel">취소</string>
+
+    <string name="warning_input_cost">상품 가격을 입력해주세요</string>
+
+    <string name="call_customer">주문자에게 전화하기</string>
+    <string name="sms_customer">주문자에게 문자하기</string>
+
+    <string name="message_sms_greeting">곰아워 배달 기사입니다.</string>
+
+    <string name="check_sms">주문자에게 문자를 보내시겠습니까?</string>
+    <string name="check_call">주문자에게 전화를 거시겠습니까까?</string>
+    <string name="check_pick_up_complete">픽업을 완료하셨습니까?</string>
+    <string name="check_delivery_complete">배달을 완료하셨습니까?</string>
+
+
+    <string name="message_pick_up_complete">픽업 완료</string>
+    <string name="message_delivery_complete">배달 완료</string>
+
+    <string name="title_address">주문 및 배달 장소</string>
+    <string name="title_message">배송 메시지</string>
+    <string name="title_price">비용</string>
+
+
+
+
 
     <!-- 주문 목록 화면 관련 resource -->
     <string name="title_order_list_fragment">주문 목록</string>
