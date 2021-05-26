@@ -1,5 +1,7 @@
 package com.santaistiger.gomourdeliveryapp.ui.view
-
+/**
+ * Created by Jangeunhye
+ */
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -27,11 +29,12 @@ import com.google.firebase.storage.ktx.storage
 import com.santaistiger.gomourdeliveryapp.R
 import com.santaistiger.gomourdeliveryapp.data.model.AccountInfo
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
+import com.santaistiger.gomourdeliveryapp.data.repository.Repository
+import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentJoinBinding
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.JoinViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 import java.util.regex.Pattern
-
 
 class JoinFragment: Fragment() {
 
@@ -39,6 +42,7 @@ class JoinFragment: Fragment() {
     private var auth: FirebaseAuth? = null
     private lateinit var binding: FragmentJoinBinding
     private lateinit var viewModel: JoinViewModel
+    private val repository: Repository = RepositoryImpl
     val db = Firebase.firestore
     val storage = Firebase.storage
     var file: Uri? = null
@@ -144,7 +148,7 @@ class JoinFragment: Fragment() {
             val bank = binding.bankEditText.text.toString()
             val account = binding.accountEditText.text.toString()
             var accountInfo = AccountInfo(bank,account)
-            val uid = " "
+            val uid = ""
 
             var deliveryMan = DeliveryMan(email, password, name, phone, uid, accountInfo, isCertified = false)
 
@@ -158,8 +162,8 @@ class JoinFragment: Fragment() {
                     } else {
                         binding.emailValid.visibility = View.VISIBLE
                         binding.emailValid.text = "사용가능한 이메일입니다."
-                        if (passwordCheck(passwordCheck) && password(password)){
-                            createAccount(deliveryMan,passwordCheck)
+                        if (password(password) && passwordEqual(passwordCheck)) {
+                            createAccount(deliveryMan)
                         }
                     }
                 }
@@ -209,7 +213,7 @@ class JoinFragment: Fragment() {
         }
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             if (s != null) {
-                passwordCheck(s)
+                passwordEqual(s)
             }
         }
     }
@@ -300,59 +304,6 @@ class JoinFragment: Fragment() {
     }
 
 
-    //패스워드 제한
-    private fun password(password: CharSequence):Boolean{
-        val passwordCheck = binding.passwordCheckEditText.text.toString()
-        val pwPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{8,16}\$"
-        if (Pattern.matches(pwPattern, password)){
-            if(password== passwordCheck){
-                binding.passwordValid.setTextColor(Color.parseColor("#000000"))
-                binding.passwordValid.visibility = View.VISIBLE
-                binding.passwordValid.text = "사용할 수 있는 비밀번호입니다."
-            }
-            else{
-                binding.passwordValid.setTextColor(Color.parseColor("#FFF44336"))
-                binding.passwordValid.visibility = View.VISIBLE
-                binding.passwordValid.text = "비밀번호가 같지 않습니다."
-
-            }
-
-            return true
-        }
-        else{
-            binding.passwordValid.setTextColor(Color.parseColor("#FFF44336"))
-            binding.passwordValid.visibility = View.VISIBLE
-            binding.passwordValid.text = "비밀번호는 대,소문자,숫자,특수문자 포함 8~16자여야합니다."
-            return false
-        }
-    }
-
-    //패스워드 체크 제한 확인
-    private fun passwordCheck(s: CharSequence):Boolean{
-        val password = binding.passwordEditText.text.toString()
-        val pwPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{8,16}\$"
-        if(password == s.toString()) {
-            if(Pattern.matches(pwPattern, password))
-            {
-                binding.passwordValid.setTextColor(Color.parseColor("#000000"))
-                binding.passwordValid.visibility = View.VISIBLE
-                binding.passwordValid.text = "사용할 수 있는 비밀번호입니다."
-                return true
-            }
-            else{
-                binding.passwordValid.setTextColor(Color.parseColor("#FFF44336"))
-                binding.passwordValid.visibility = View.VISIBLE
-                binding.passwordValid.text = "비밀번호는 대,소문자,숫자,특수문자 포함 8~16자여야합니다."
-                return false
-            }
-        }
-        else{
-            binding.passwordValid.setTextColor(Color.parseColor("#FFF44336"))
-            binding.passwordValid.visibility = View.VISIBLE
-            binding.passwordValid.text = "비밀번호가 같지 않습니다."
-            return false
-        }
-    }
 
     //모든 영역 널이 아닌지 확인
     private fun checkFieldsForEmptyValues() {
@@ -365,10 +316,41 @@ class JoinFragment: Fragment() {
         signUpButton.isEnabled =
             !(email == "" || password == "" || passwordCheck=="" || phone=="" || imageFileText=="")
     }
+    // 패스워드 체크 제한
+    private fun password(password: CharSequence): Boolean {
+        val pwPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{8,16}\$"
+        if (Pattern.matches(pwPattern, password)) {
+            binding.passwordValid.visibility = View.GONE
+            return true
+        }
+        else {
+            // 비밀번호 형식 맞지 않을떄
+            binding.passwordValid.setTextColor(Color.parseColor("#FFF44336"))
+            binding.passwordValid.visibility = View.VISIBLE
+           binding.passwordValid.setText("비미ㅏ")
+            return false
+        }
+    }
 
+    private fun passwordEqual(passwordCheck: CharSequence):Boolean{
+        val password = binding.passwordEditText.text.toString()
+        if(password == passwordCheck.toString()){
+            binding.passwordValid.setTextColor(Color.parseColor("#000000"))
+            binding.passwordValid.visibility = View.VISIBLE
+            binding.passwordValid.setText(R.string.password_available_info)
+            return true
+        }
+        else{
+            // 비밀번호 같지 않을 때
+            binding.passwordValid.setTextColor(Color.parseColor("#FFF44336"))
+            binding.passwordValid.visibility = View.VISIBLE
+            binding.passwordValid.setText(R.string.password_different_info)
+            return false
+        }
+    }
 
     //회원가입
-    private fun createAccount(deliveryMan: DeliveryMan, passwordCheck:String){
+    private fun createAccount(deliveryMan: DeliveryMan){
         auth?.createUserWithEmailAndPassword(deliveryMan.email, deliveryMan.password)
             ?.addOnCompleteListener() {
                     task->
@@ -376,15 +358,9 @@ class JoinFragment: Fragment() {
                     sendImage()
                     val user = auth!!.currentUser
                     deliveryMan.uid = user.uid
-                    db.collection("deliveryMan")
-                        .document(deliveryMan.uid!!).set(deliveryMan)
-                        .addOnSuccessListener {
-                            Toast.makeText(context,"학생증 인증을 기다리세요",Toast.LENGTH_LONG).show()
-                            findNavController().navigate(R.id.action_joinFragment_to_loginFragment)
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w("TEST", "Error adding document", e)
-                        }
+                    repository.writeFireStoreDeliveryMan(deliveryMan)
+                    Toast.makeText(context,R.string.join_finish_info,Toast.LENGTH_LONG).show()
+                    findNavController().navigate(R.id.action_joinFragment_to_loginFragment)
                 }
                 else{
                     Log.w("TEST","createUserWithEmail: failure",task.exception )

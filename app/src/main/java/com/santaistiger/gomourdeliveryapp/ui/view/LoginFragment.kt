@@ -1,10 +1,13 @@
 package com.santaistiger.gomourdeliveryapp.ui.view
-
+/**
+ * Created by Jangeunhye
+ */
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -129,7 +132,6 @@ class LoginFragment: Fragment(){
                                     autoLogin.putString("email",email)
                                     autoLogin.putString("password",password)
                                     autoLogin.commit()
-                                    Toast.makeText(context,"commit 완료", Toast.LENGTH_LONG).show()
 
                                     // 주문 목록 페이지로 이동
                                     findNavController().navigate(R.id.action_loginFragment_to_orderListFragment)
@@ -137,7 +139,7 @@ class LoginFragment: Fragment(){
                                 }
                                 else{
                                     //학생증인증이 안되었을 때
-                                    Toast.makeText(context,"아직 학생증 인증이 완료되지 않았습니다",Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context,R.string.login_student_id_info,Toast.LENGTH_LONG).show()
                                 }
                             }
                         }
@@ -153,8 +155,8 @@ class LoginFragment: Fragment(){
 
     fun alertCancel() {
         AlertDialog.Builder(requireActivity())
-            .setMessage("로그인에 실패하였습니다.")
-            .setPositiveButton("확인",null)
+            .setMessage(R.string.login_fail_dialog)
+            .setPositiveButton(R.string.login_fail_ok,null)
             .create()
             .show()
     }

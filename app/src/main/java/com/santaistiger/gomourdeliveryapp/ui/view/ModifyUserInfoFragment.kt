@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -23,6 +24,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.R
+import com.santaistiger.gomourdeliveryapp.data.model.Customer
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentModifyUserInfoBinding
 import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
@@ -66,8 +68,24 @@ class ModifyUserInfoFragment: Fragment() {
                     binding.phoneModify.setText(data.phone)
                     binding.bankModify.setText(data.accountInfo?.bank)
                     binding.accountModify.setText(data.accountInfo?.account)
+                    binding.passwordModify.setText(data.password)
+                    binding.passwordCheckModify.setText(data.password)
                 }
             }
+
+            // 비밀번호 입력창 누르면 사라져
+            binding.passwordCheckModify.setOnFocusChangeListener { v, hasFocus ->
+                if(hasFocus){
+                    binding.passwordModify.text.clear()
+                }
+            }
+            // 비밀번호 확인창 누르면 사라져
+            binding.passwordCheckModify.setOnFocusChangeListener { v, hasFocus ->
+                if(hasFocus){
+                    binding.passwordCheckModify.text.clear()
+                }
+            }
+
 
 
             //비어 있지 않을 때 비밀번호 감지하여 판단
@@ -102,19 +120,13 @@ class ModifyUserInfoFragment: Fragment() {
 
             // 변경완료 버튼 클릭 시
             binding.modifyButton.setOnClickListener{
-                if(binding.passwordModify.toString() == "" && binding.passwordCheckModify.toString() ==""){
-                    // 변경사항 없음
-                }
-                else{
-                    password =binding.passwordModify.text.toString()
-                    passwordCheck  = binding.passwordCheckModify.text.toString()
-                }
-
-                if (passwordCheck(passwordCheck) && password(password)){
+                val password =binding.passwordModify.text.toString()
+                val passwordCheck  = binding.passwordCheckModify.text.toString()
+                if (password(password) && passwordEqual(passwordCheck)){
                     modifyUser()
                 }
                 else{
-                    Toast.makeText(context,"정보를 다시 입력하세요", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context,R.string.confirm_fail, Toast.LENGTH_LONG).show()
                 }
 
             }
@@ -159,56 +171,36 @@ class ModifyUserInfoFragment: Fragment() {
         }
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             if (s != null) {
-                passwordCheck(s)
+                passwordEqual(s)
             }
         }
     }
 
-
-    //패스워드 제한
-    private fun password(password: CharSequence):Boolean{
-        val passwordCheck = binding.passwordCheckModify.text.toString()
+    // 패스워드 체크 제한
+    private fun password(password: CharSequence): Boolean {
         val pwPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{8,16}\$"
-        if (Pattern.matches(pwPattern, password)){
-            if(password== passwordCheck){
-                binding.passwordModifyValid.visibility = View.VISIBLE
-                binding.passwordModifyValid.text = "사용할 수 있는 비밀번호입니다."
-            }
-            else{
-                binding.passwordModifyValid.visibility = View.VISIBLE
-                binding.passwordModifyValid.text = "비밀번호가 같지 않습니다."
-
-            }
-
+        if (Pattern.matches(pwPattern, password)) {
+            binding.passwordModifyValid.visibility = View.GONE
             return true
         }
-        else{
-            binding.passwordModifyValid.visibility = View.VISIBLE
-            binding.passwordModifyValid.text = "비밀번호는 대,소문자,숫자,특수문자 포함 8~16자여야합니다."
+        else {
+            // 비밀번호 형식 맞지 않을떄
+            passwordValidWrong()
+            binding.passwordModifyValid.setText(R.string.password_form_info)
             return false
         }
     }
 
-    //패스워드 체크 제한 확인
-    private fun passwordCheck(s: CharSequence):Boolean{
+    private fun passwordEqual(passwordCheck: CharSequence):Boolean{
         val password = binding.passwordModify.text.toString()
-        val pwPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@\$%^&*-]).{8,16}\$"
-        if(password == s.toString()) {
-            if(Pattern.matches(pwPattern, password))
-            {
-                binding.passwordModifyValid.visibility = View.VISIBLE
-                binding.passwordModifyValid.text = "사용할 수 있는 비밀번호입니다."
-                return true
-            }
-            else{
-                binding.passwordModifyValid.visibility = View.VISIBLE
-                binding.passwordModifyValid.text = "비밀번호는 대,소문자,숫자,특수문자 포함 8~16자여야합니다."
-                return false
-            }
+        if(password == passwordCheck.toString()){
+            passwordValidCorrect()
+            return true
         }
         else{
-            binding.passwordModifyValid.visibility = View.VISIBLE
-            binding.passwordModifyValid.text = "비밀번호가 같지 않습니다."
+            // 비밀번호 같지 않을 때
+            passwordValidWrong()
+            binding.passwordModifyValid.setText(R.string.password_different_info)
             return false
         }
     }
@@ -298,4 +290,19 @@ class ModifyUserInfoFragment: Fragment() {
             }
             .addOnFailureListener { Toast.makeText(context,"탈퇴 실패", Toast.LENGTH_LONG).show() }
     }
+
+    // 비밀번호 틀렸을 때 문구 색깔
+    private fun passwordValidWrong(){
+        binding.passwordModifyValid.setTextColor(Color.parseColor("#FFF44336"))
+        binding.passwordModifyValid.visibility = View.VISIBLE
+    }
+
+    // 비밀번호 사용가능할 때 문구
+    private fun passwordValidCorrect(){
+        binding.passwordModifyValid.setTextColor(Color.parseColor("#000000"))
+        binding.passwordModifyValid.visibility = View.VISIBLE
+        binding.passwordModifyValid.setText(R.string.password_available_info)
+    }
+
+
 }
