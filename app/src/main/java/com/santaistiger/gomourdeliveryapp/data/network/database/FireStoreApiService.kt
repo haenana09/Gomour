@@ -36,6 +36,9 @@ object FireStoreApi {
         }
         return response
     }
+    suspend fun checkJoinable(email:String): Boolean{
+        return customerTable.whereEqualTo("email",email).get().await().isEmpty
+    }
 
     fun updateFireStorePassword(deliveryManUid: String,password:String){
         deliveryManTable.document(deliveryManUid).update("password",password)
@@ -44,6 +47,7 @@ object FireStoreApi {
     fun updatePhone(deliveryManUid: String,phone:String){
         deliveryManTable.document(deliveryManUid).update("phone",phone)
     }
+
 
     fun deleteFireStoreDeliveryMan(deliveryManUid: String){
         deliveryManTable.document(deliveryManUid).delete()

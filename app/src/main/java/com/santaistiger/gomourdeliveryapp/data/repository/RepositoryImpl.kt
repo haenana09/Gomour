@@ -1,5 +1,7 @@
 package com.santaistiger.gomourdeliveryapp.data.repository
 
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import com.santaistiger.gomourdeliveryapp.data.model.DeliveryMan
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.network.database.AuthApi
@@ -23,6 +25,27 @@ object RepositoryImpl : Repository {
         val deliveryMan = response.deliveryMan
         return deliveryMan
     }
+
+    override suspend fun login(
+        firebaseAuth: FirebaseAuth,
+        email: String,
+        password: String
+    ): AuthResult? {
+        val response = AuthApi.login(firebaseAuth, email, password)
+        return response.authResult
+    }
+
+    override suspend fun join(
+        firebaseAuth: FirebaseAuth,
+        email: String,
+        password: String
+    ): AuthResult? {
+        val response = AuthApi.join(firebaseAuth, email, password)
+        return response.authResult
+    }
+
+    // 가입할 수 있으면 true, 가입할 수 없으면 false
+    override suspend fun checkJoinable(email: String): Boolean = FireStoreApi.checkJoinable(email)
 
     override fun updateAuthPassword(password: String) {
         AuthApi.updateAuthPassword(password)

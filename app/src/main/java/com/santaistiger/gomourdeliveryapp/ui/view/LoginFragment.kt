@@ -29,6 +29,9 @@ import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.fragment_join.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class LoginFragment: Fragment(){
@@ -57,10 +60,19 @@ class LoginFragment: Fragment(){
 
         // 로그인 버튼 눌렀을 때
         binding.loginButton.setOnClickListener{
-            val id = binding.emailLogin.text.toString()
-            val email = id + "@dankook.ac.kr"
-            val password = binding.passwordLogin.text.toString()
-            signIn(email,password)
+            viewModel.email = binding.emailLogin.text.toString()
+            viewModel.password = binding.passwordLogin.text.toString()
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.login().join()
+                if (viewModel.loginInfo.value != null) { // 로그인 성공 시
+                    findNavController().navigate(R.id.action_loginFragment_to_orderListFragment)
+                    (requireActivity() as BaseActivity).setNavigationDrawerHeader()
+                } else { // 로그인 실패 시
+                    launch(Dispatchers.Main) {
+                        alertCancel(this@LoginFragment.requireContext())
+                    }
+                }
+            }
         }
 
         // 이메일 포커스
@@ -148,13 +160,13 @@ class LoginFragment: Fragment(){
 
                 ?.addOnFailureListener {
                     // 해당 정보가 없을 때
-                    alertCancel()
+                    alertCancel(requireContext())
                 }
         }
 
 
-    fun alertCancel() {
-        AlertDialog.Builder(requireActivity())
+    fun alertCancel(context: Context) {
+        AlertDialog.Builder(context)
             .setMessage(R.string.login_fail_dialog)
             .setPositiveButton(R.string.login_fail_ok,null)
             .create()
