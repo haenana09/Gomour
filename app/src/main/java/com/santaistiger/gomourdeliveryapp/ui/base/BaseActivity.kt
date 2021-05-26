@@ -46,7 +46,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val repository: Repository = RepositoryImpl
 
     // 배달원의 최근 주문
-    var recentOrder = Order()
+    var recentOrder: Order? = null
 
     // reqltimeDB에서 받아온 주문 리스트
     var order_request_list = ArrayList<OrderRequest>()
@@ -162,36 +162,34 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val get_order_status_switch =
             item.actionView.findViewById<Switch>(R.id.get_order_status_switch)
 
-        get_order_status_switch.setOnCheckedChangeListener(object :
-            CompoundButton.OnCheckedChangeListener {
-            override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-                if (isChecked) {    // 주문 받기 스위치 on으로 변경
+        get_order_status_switch.setOnCheckedChangeListener { _, isChecked ->
 
-                    if (recentOrder.status != Status.DELIVERY_COMPLETE) {     // 현재 배달중인 주문이 있을 경우
-                        androidx.appcompat.app.AlertDialog.Builder(this@BaseActivity)
-                            .setMessage("현재 배달중인 주문이 있어 배달 완료 전까지 주문 받기 상태를 ON으로 변경할 수 없습니다.")
-                            .setPositiveButton("확인", null)
-                            .create()
-                            .show()
+            if (isChecked) {    // 주문 받기 스위치 on으로 변경
+                if (recentOrder != null && recentOrder!!.status != Status.DELIVERY_COMPLETE) {
+                    androidx.appcompat.app.AlertDialog.Builder(this@BaseActivity)
+                        .setMessage("현재 배달중인 주문이 있어 배달 완료 전까지 주문 받기 상태를 ON으로 변경할 수 없습니다.")
+                        .setPositiveButton("확인", null)
+                        .create()
+                        .show()
+                    get_order_status_switch.setChecked(false)   // 주문 받기 스위치 off로 설정
 
-                        get_order_status_switch.setChecked(false)   // 주문 받기 스위치 off로 설정
-                    } else {
-                        Log.d(TAG, "주문 받기 on")
-                        order_request_list.clear()
-                        popUpState = 0 //주문받기 on을 누르면 팝업창 띄우도록 설정
-                        // 주문 받도록 설정
-                        myRef.addChildEventListener(childEventListener)
-                    }
-                } else {    // 주문 받기 스위치 off로 변경
-                    Log.d(TAG, "주문 받기 off")
+                } else {
+                    Log.d(TAG, "주문 받기 on")
                     order_request_list.clear()
-                    popUpState = 1 // 팝업창 못띄우도록 설정
+                    popUpState = 0 //주문받기 on을 누르면 팝업창 띄우도록 설정
 
-                    // 주문 더이상 받지 않도록 설정
-                    myRef.removeEventListener(childEventListener)
+                    // 주문 받도록 설정
+                    myRef.addChildEventListener(childEventListener)
                 }
+            } else {    // 주문 받기 스위치 off로 변경
+                Log.d(TAG, "주문 받기 off")
+                order_request_list.clear()
+                popUpState = 1 // 팝업창 못띄우도록 설정
+
+                // 주문 더이상 받지 않도록 설정
+                myRef.removeEventListener(childEventListener)
             }
-        })
+        }
     }
 
     // 주문 요청 리스트 받아오기 위한 인터페이스 선언

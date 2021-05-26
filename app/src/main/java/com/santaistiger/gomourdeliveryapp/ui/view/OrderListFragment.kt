@@ -57,7 +57,6 @@ class OrderListFragment : Fragment() {
         val adapter = OrderListAdapter(context)
         val deliveryManUid = repository.getUid()
         val emptyNoticeTextView = binding.emptyNoticeString
-        var recentOrder = (activity as BaseActivity).recentOrder
 
         /**
          * realtime database에 주문 내역이 존재하는지 확인
@@ -66,17 +65,19 @@ class OrderListFragment : Fragment() {
          * 한 주문 배달 제한을 위해 최근 주문의 주문의 배달 상태를 저장한다.
          */
         viewModel.getOrderList(deliveryManUid)
-        viewModel.isOrderExist.observe(viewLifecycleOwner, Observer<Boolean> { it ->
-            if (it) {
+
+        viewModel.orders.observe(viewLifecycleOwner, Observer<ArrayList<Order>> { orders ->
+            Log.i(TAG, orders.toString())
+            if (!orders.isNullOrEmpty()) {
                 // 최근 날짜 순으로 주문 목록 재배열 후 adapter의 orders에 할당
-                adapter.orderList = viewModel.orders.asReversed()
+                adapter.orderList = orders.asReversed()
                 adapter.notifyDataSetChanged()
 
                 emptyNoticeTextView.visibility = View.GONE     // 빈 리싸이클러뷰 안내 문구 숨김
-                recentOrder.status = viewModel.orders.last().status   // 최근 주문의 배달 상태 설정
+                (activity as BaseActivity).recentOrder = orders.last()   // 최근 주문의 배달 상태 설정
             } else {
                 emptyNoticeTextView.visibility = View.VISIBLE  // 빈 리싸이클러뷰 안내 문구 표시
-                recentOrder.status = Status.DELIVERY_COMPLETE   // 최근 주문의 배달 상태 설정
+                (activity as BaseActivity).recentOrder = null   // 최근 주문의 배달 상태 설정
             }
         })
 
