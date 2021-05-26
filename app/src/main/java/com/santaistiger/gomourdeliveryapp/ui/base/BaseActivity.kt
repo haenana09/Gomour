@@ -10,7 +10,6 @@ import android.telephony.PhoneNumberUtils
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +34,7 @@ import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.ActivityBaseBinding
 import com.santaistiger.gomourdeliveryapp.ui.customview.RoundedAlertDialog
+import com.santaistiger.gomourdeliveryapp.ui.view.OrderDetailFragment
 import com.santaistiger.gomourdeliveryapp.ui.view.OrderRequestFragment
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.dialog_deliverytime.*
@@ -295,6 +295,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     // 팝업창 띄우는 함수
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private fun sendValue(order_request: OrderRequest) {
         //다른 팝업창 못띄우게 상태 설정
         popUpState = 1
@@ -334,16 +335,23 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 myRef.child(it).get().addOnSuccessListener {
                     if (it.exists()) {
                         //popUpState =1
+
+                        // 주문 받기 스위치 off로 설정
                         val item = navigation_view.menu.findItem(R.id.getOrderStatus)
                         val get_order_status_switch =
                             item.actionView.findViewById<Switch>(R.id.get_order_status_switch)
-                        get_order_status_switch.setChecked(false)   // 주문 받기 스위치 off로 설정
-                        drawer_layout.closeDrawers()    // 네비게이션 드로어 닫기
+                        get_order_status_switch.setChecked(false)
+
+                        // 네비게이션 드로어 닫기
+                        drawer_layout.closeDrawers()
 
                         //realtimeDB Order테이블에 업로드
                         orderCreate(order_request, deliverytime)
                         //request_order테이블에서 데이터 삭제
                         order_request.orderId?.let { myRef.child(it).removeValue() }
+
+                        // 주문 번호를 넘겨주며 주문 상세 화면으로 이동
+                        nav_host_fragment.findNavController().navigate(R.id.orderDetailFragment, Bundle().apply{putString("orderId", order_request.orderId)})
                     } else {
                         // 이미 배정된 주문이거나, 주문자가 취소할 경우
                         alertCancel()
