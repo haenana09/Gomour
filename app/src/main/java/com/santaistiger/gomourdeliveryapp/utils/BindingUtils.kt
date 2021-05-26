@@ -9,17 +9,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.data.model.Status
+import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderDetailStoreAdapter
 import com.santaistiger.gomourdeliveryapp.ui.customview.DetailDestinationView
 import com.santaistiger.gomourdeliveryapp.ui.customview.DetailMessageView
 import com.santaistiger.gomourdeliveryapp.ui.customview.DetailPriceView
-import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderDetailStoreAdapter
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
 
-val TAG = "BindingUtils"
 
 object BindingUtils {
-    val numberFormat = NumberFormat.getInstance()
+    private const val TAG = "BindingUtils"
 
     @BindingAdapter("bind_detail_store_list")
     @JvmStatic

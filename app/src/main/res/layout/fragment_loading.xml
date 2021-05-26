@@ -29,12 +29,12 @@
 
         <TextView
             android:id="@+id/app_version"
+            style="@style/gs_text_regular_14"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/nsregular"
+            android:paddingHorizontal="128dp"
             android:text="@string/app_version"
-            android:textAlignment="center"
-            android:textColor="@color/black" />
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout

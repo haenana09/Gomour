@@ -42,8 +42,8 @@
 
     <!-- 팝업창 관련 resource -->
     <string name="order_request_title">새로운 요청</string>
-    <string name="order_request_no">거절</string>
-    <string name="order_request_yes">수락</string>
+    <string name="order_request_no">거ㅤ절</string>
+    <string name="order_request_yes">수ㅤ락</string>
 
     <!-- 회원가입 관련 resource -->
     <string name = "dankook_domain">\@dankook.ac.kr</string>
@@ -72,7 +72,7 @@
 
     <!-- 로딩 화면 관련 resource -->
     <string name = "app_title">곰아워</string>
-    <string name = "app_version">\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t배달원용</string>
+    <string name = "app_version">배달원용</string>
 
     <!-- 로그인 화면 관련 resource -->
     <string name="login_student_id_info">아직 학생증 인증이 완료되지 않았습니다.</string>

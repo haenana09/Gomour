@@ -14,8 +14,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -32,8 +30,8 @@ import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentJoinBinding
 import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
+import com.santaistiger.gomourdeliveryapp.ui.customview.RoundedAlertDialog
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.JoinViewModel
-import com.santaistiger.gomourdeliveryapp.ui.viewmodel.OrderListViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -163,13 +161,9 @@ class JoinFragment : Fragment() {
             if (isUniqueEmail) {
                 if (password(password) && passwordEqual(passwordCheck)) {
                     createAccount(deliveryMan)
-                } else {
-                    AlertDialog.Builder(requireContext())
-                        .setMessage(R.string.join_email_check_info)
-                        .setPositiveButton("확인", null)
-                        .create()
-                        .show()
                 }
+            } else {
+                showAlertDialog(resources.getString(R.string.join_email_check_info))
             }
         }
 
@@ -186,6 +180,16 @@ class JoinFragment : Fragment() {
         })
 
         return binding.root
+    }
+
+    private fun showAlertDialog(msg: String) {
+        RoundedAlertDialog()
+            .setMessage(msg)
+            .setPositiveButton(resources.getString(R.string.ok), null)
+            .show(
+                (requireActivity() as BaseActivity).supportFragmentManager,
+                "rounded alert dialog"
+            )
     }
 
 

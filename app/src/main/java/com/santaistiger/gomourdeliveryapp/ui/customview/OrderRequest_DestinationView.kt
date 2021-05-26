@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import com.santaistiger.gomourdeliveryapp.R
-import com.santaistiger.gomourdeliveryapp.databinding.ItemDestinationBinding
 import com.santaistiger.gomourdeliveryapp.databinding.ItemOrderRequestDestinationBinding
 
 

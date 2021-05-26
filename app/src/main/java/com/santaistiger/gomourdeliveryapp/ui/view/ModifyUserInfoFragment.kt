@@ -30,6 +30,7 @@ import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentModifyUserInfoBinding
 import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
+import com.santaistiger.gomourdeliveryapp.ui.customview.RoundedAlertDialog
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.ModifyUserInfoViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.coroutines.CoroutineScope
@@ -122,7 +123,7 @@ class ModifyUserInfoFragment : Fragment() {
 
         // 탈퇴버튼 클릭 시
         binding.withdrawalButton.setOnClickListener {
-            alertCancel()
+            showAlertDialog(resources.getString(R.string.withdrawal_dialog))
         }
         return binding.root
     }
@@ -244,15 +245,12 @@ class ModifyUserInfoFragment : Fragment() {
     }
 
     //탈퇴 시
-    fun alertCancel() {
-        AlertDialog.Builder(requireActivity())
-            .setMessage(R.string.withdrawal_dialog)
-            .setPositiveButton(R.string.withdrawal_yes) { _, _ ->
-                withdrawal()
-            }
-            .setNegativeButton(R.string.withdrawal_no, null)
-            .create()
-            .show()
+    private fun showAlertDialog(msg: String) {
+        RoundedAlertDialog()
+            .setMessage(msg)
+            .setPositiveButton(resources.getString(R.string.ok)) { withdrawal() }
+            .setNegativeButton(resources.getString(R.string.cancel), null)
+            .show((requireActivity() as BaseActivity).supportFragmentManager, "rounded alert dialog")
     }
 
     // 탈퇴

@@ -28,6 +28,7 @@ import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentLoginBinding
 import com.santaistiger.gomourdeliveryapp.ui.base.BaseActivity
+import com.santaistiger.gomourdeliveryapp.ui.customview.RoundedAlertDialog
 import com.santaistiger.gomourdeliveryapp.ui.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.fragment_join.*
@@ -85,7 +86,7 @@ class LoginFragment : Fragment() {
 
                     } else { // 로그인 실패 시
                         launch(Dispatchers.Main) {
-                            alertCancel(this@LoginFragment.requireContext())
+                            showAlertDialog(resources.getString(R.string.login_fail_dialog))
                         }
                     }
                 }
@@ -193,18 +194,14 @@ class LoginFragment : Fragment() {
 
             ?.addOnFailureListener {
                 // 해당 정보가 없을 때
-                alertCancel(requireContext())
+                showAlertDialog(resources.getString(R.string.login_fail_dialog))
             }
     }
 
-
-    fun alertCancel(context: Context) {
-        AlertDialog.Builder(context)
-            .setMessage(R.string.login_fail_dialog)
-            .setPositiveButton(R.string.login_fail_ok, null)
-            .create()
-            .show()
+    private fun showAlertDialog(msg: String) {
+        RoundedAlertDialog()
+            .setMessage(msg)
+            .setPositiveButton(resources.getString(R.string.ok), null)
+            .show((requireActivity() as BaseActivity).supportFragmentManager, "rounded alert dialog")
     }
-
-
 }

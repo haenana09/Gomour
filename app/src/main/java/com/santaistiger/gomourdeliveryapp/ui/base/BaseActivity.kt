@@ -3,14 +3,17 @@ package com.santaistiger.gomourdeliveryapp.ui.base
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.util.Log
+import android.util.TimeUtils
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
+import android.view.WindowManager
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -33,19 +36,20 @@ import com.santaistiger.gomourdeliveryapp.data.model.Status
 import com.santaistiger.gomourdeliveryapp.data.repository.Repository
 import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.ActivityBaseBinding
+import com.santaistiger.gomourdeliveryapp.databinding.DialogInputDeliveryTimeBinding
 import com.santaistiger.gomourdeliveryapp.ui.customview.RoundedAlertDialog
-import com.santaistiger.gomourdeliveryapp.ui.view.OrderDetailFragment
 import com.santaistiger.gomourdeliveryapp.ui.view.OrderRequestFragment
+import com.santaistiger.gomourdeliveryapp.utils.toDp
 import kotlinx.android.synthetic.main.activity_base.*
-import kotlinx.android.synthetic.main.dialog_deliverytime.*
-import kotlinx.android.synthetic.main.fragment_order_request.*
 import kotlinx.android.synthetic.main.nav_header.view.*
 import java.util.*
 import kotlin.properties.Delegates
 
 
 class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private val TAG = "BaseActivity"
+    companion object {
+        private val TAG = "BaseActivity"
+    }
     val database = Firebase.database
     val databaseReference: DatabaseReference by lazy { FirebaseDatabase.getInstance().reference }
     private val repository: Repository = RepositoryImpl
@@ -177,7 +181,10 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 header.apply {
                     user_name_string.text = currentUserInfo.name
                     user_phone_num_string.text =
-                        PhoneNumberUtils.formatNumber(currentUserInfo.phone, Locale.getDefault().country)
+                        PhoneNumberUtils.formatNumber(
+                            currentUserInfo.phone,
+                            Locale.getDefault().country
+                        )
                     user_email_string.text = currentUserInfo.email
                 }
             }
@@ -293,6 +300,64 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    /** 배달 예상 시간 입력하는 다이얼로그 띄우는 함수 */
+    private fun showDeliveryTimeInputDialog(orderRequest: OrderRequest) {
+        val binding = DataBindingUtil.inflate<DialogInputDeliveryTimeBinding>(
+            LayoutInflater.from(this),
+            R.layout.dialog_input_delivery_time,
+            null, false
+        )
+
+        val dialog: AlertDialog = AlertDialog.Builder(this)
+            .setView(binding.root)
+            .create().apply {
+                show()
+                window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                window?.setLayout(
+                    toDp(resources.displayMetrics, 240),
+                    WindowManager.LayoutParams.WRAP_CONTENT
+                )
+            }
+        setOnClickListener(binding, dialog, orderRequest)
+    }
+
+    /** 배달 예상시간입력 다이얼로그에서 확인 버튼에 클릭 리스너 설정하는 함수 */
+    private fun setOnClickListener(
+        binding: DialogInputDeliveryTimeBinding,
+        dialog: AlertDialog,
+        orderRequest: OrderRequest
+    ) {
+        binding.btnPositive.setOnClickListener {
+            orderRequest.orderId?.let {
+                myRef.child(it).get().addOnSuccessListener {
+                    if (it.exists()) {
+                        // 주문 받기 스위치 off로 설정
+                        val item = navigation_view.menu.findItem(R.id.getOrderStatus)
+                        item.actionView.findViewById<Switch>(R.id.get_order_status_switch).isChecked = false
+
+                        // 네비게이션 드로어 닫기
+                        drawer_layout.closeDrawers()
+
+                        //realtimeDB Order테이블에 업로드
+                        val time = binding.etCost.text.toString().toLong()
+                        orderCreate(orderRequest, orderRequest.orderDate!! + time * 60000)
+
+                        //request_order테이블에서 데이터 삭제
+                        orderRequest.orderId?.let { myRef.child(it).removeValue() }
+
+                        // 주문 번호를 넘겨주며 주문 상세 화면으로 이동
+                        nav_host_fragment.findNavController().navigate(
+                            R.id.orderDetailFragment,
+                            Bundle().apply { putString("orderId", orderRequest.orderId) })
+                    } else {
+                        // 이미 배정된 주문이거나, 주문자가 취소할 경우
+                        showCancelDialog()
+                    }
+                }
+            }
+            dialog.dismiss()
+        }
+    }
 
     // 팝업창 띄우는 함수
     @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -316,51 +381,6 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
 
-        // 배달 예상 시간 입력하는 다이얼로그
-        val builder = AlertDialog.Builder(this)
-        builder.setView(layoutInflater.inflate(R.layout.dialog_deliverytime, null))
-
-        // 배달예상시간다이얼로그 수락 시 리스너
-        var listener = DialogInterface.OnClickListener { p0, _ ->
-            val dialog = p0 as AlertDialog
-            var deliverytimeEditTEext = dialog.findViewById<EditText>(R.id.editText).text
-            var deliverytime: Long = 30
-
-            //배달예상 시간입력하지 않을 경우 디폴트 30분으로 전송
-            if (deliverytimeEditTEext.length == 0) {
-                deliverytime = 30
-            }
-
-            order_request.orderId?.let {
-                myRef.child(it).get().addOnSuccessListener {
-                    if (it.exists()) {
-                        //popUpState =1
-
-                        // 주문 받기 스위치 off로 설정
-                        val item = navigation_view.menu.findItem(R.id.getOrderStatus)
-                        val get_order_status_switch =
-                            item.actionView.findViewById<Switch>(R.id.get_order_status_switch)
-                        get_order_status_switch.setChecked(false)
-
-                        // 네비게이션 드로어 닫기
-                        drawer_layout.closeDrawers()
-
-                        //realtimeDB Order테이블에 업로드
-                        orderCreate(order_request, deliverytime)
-                        //request_order테이블에서 데이터 삭제
-                        order_request.orderId?.let { myRef.child(it).removeValue() }
-
-                        // 주문 번호를 넘겨주며 주문 상세 화면으로 이동
-                        nav_host_fragment.findNavController().navigate(R.id.orderDetailFragment, Bundle().apply{putString("orderId", order_request.orderId)})
-                    } else {
-                        // 이미 배정된 주문이거나, 주문자가 취소할 경우
-                        alertCancel()
-                    }
-                }
-            }
-        }
-
-
         // 주문 거절 누를때
         myDialogFragment.negativeSetOnClickedListener(object :
             OrderRequestFragment.NegativeButtonClickListener {
@@ -380,15 +400,11 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 order_request.orderId?.let {
                     myRef.child(it).get().addOnSuccessListener {
                         if (it.exists()) {
-                            //popUpState = 1
-                            builder.setView(R.layout.dialog_deliverytime)
-                                .setPositiveButton("확인", listener)
-                                .setCancelable(false)
-                                .show()
+                            showDeliveryTimeInputDialog(order_request)
                             myDialogFragment.dismiss()
                         } else {
                             // 이미 배정된 주문이거나, 주문자가 취소할 경우
-                            alertCancel()
+                            showCancelDialog()
                         }
                     }
                 }
@@ -417,18 +433,14 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-    fun alertCancel() {
-        AlertDialog.Builder(this)
+    fun showCancelDialog() {
+        RoundedAlertDialog()
             .setMessage("이미 처리된 주문입니다.")
-            .setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+            .setPositiveButton("확인") {
                 order_request_list.removeAt(0)
                 popUpState = 0 //팝업창 띄우는 상태로 변경
-
-            })
-            .setCancelable(false)
-            .create()
-            .show()
-
+            }
+            .show(supportFragmentManager, "rounded alert dialog")
     }
 
 
