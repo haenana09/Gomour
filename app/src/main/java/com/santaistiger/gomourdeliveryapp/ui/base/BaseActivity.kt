@@ -338,6 +338,7 @@ class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         val get_order_status_switch =
                             item.actionView.findViewById<Switch>(R.id.get_order_status_switch)
                         get_order_status_switch.setChecked(false)   // 주문 받기 스위치 off로 설정
+                        drawer_layout.closeDrawers()    // 네비게이션 드로어 닫기
 
                         //realtimeDB Order테이블에 업로드
                         orderCreate(order_request, deliverytime)
