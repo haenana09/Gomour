@@ -11,15 +11,13 @@ import com.google.firebase.ktx.Firebase
 import com.santaistiger.gomourdeliveryapp.data.model.Order
 import com.santaistiger.gomourdeliveryapp.ui.adapter.OrderListAdapter
 import kotlinx.coroutines.tasks.await
-import java.lang.Exception
-
-
-private const val TAG: String = "FirebaseApiService"
-private const val ORDER_REQUEST_TABLE = "order_request"
-private const val ORDER_TABLE = "order"
 
 
 object RealtimeApi {
+    private const val TAG: String = "FirebaseApiService"
+    private const val ORDER_REQUEST_TABLE = "order_request"
+    private const val ORDER_TABLE = "order"
+
     private val database = Firebase.database
     private val orderRequestTable = database.getReference(ORDER_REQUEST_TABLE)
     private val orderTable = database.getReference(ORDER_TABLE)
@@ -36,7 +34,6 @@ object RealtimeApi {
         }
         return response
     }
-
 
     fun updateOrder(key: String, order: Order) {
         orderTable.child(key).setValue(order)
