@@ -1,4 +1,4 @@
-package com.santaistiger.gomourdeliveryapp.ui.view
+package com.santaistiger.gomourdeliveryapp.ui.customview
 /**
  * Created by Jangeunhye
  */
@@ -8,11 +8,8 @@ import android.view.*
 import androidx.fragment.app.DialogFragment
 import com.santaistiger.gomourdeliveryapp.data.model.OrderRequest
 import com.santaistiger.gomourdeliveryapp.databinding.FragmentOrderRequestBinding
-import com.santaistiger.gomourdeliveryapp.ui.customview.OrderRequest_DestinationView
-import com.santaistiger.gomourdeliveryapp.ui.customview.OrderRequest_StoreView
 import com.santaistiger.gomourdeliveryapp.utils.numberFormat
 import com.santaistiger.gomourdeliveryapp.utils.toDp
-import kotlinx.android.synthetic.main.item_list_store.view.*
 import kotlinx.android.synthetic.main.item_order_request_destination.view.*
 import kotlinx.android.synthetic.main.item_order_request_store.view.*
 

@@ -1,4 +1,7 @@
 package com.santaistiger.gomourdeliveryapp.ui.view
+/**
+ * Created by Jangeunhye
+ */
 
 import android.content.Context
 import android.content.Intent
@@ -39,9 +42,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
-/**
- * Created by Jangeunhye
- */
 
 
 class JoinFragment : Fragment() {
@@ -62,7 +62,9 @@ class JoinFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        setToolbar()
+        // 툴바 설정
+        (requireActivity() as BaseActivity).setToolbar(
+            requireContext(), false, null, false)
 
         auth = Firebase.auth
         binding = DataBindingUtil.inflate<FragmentJoinBinding>(
@@ -195,15 +197,6 @@ class JoinFragment : Fragment() {
 
     private fun showToast(msg: String) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-    }
-
-
-    //툴바
-    private fun setToolbar() {
-        requireActivity().apply {
-            toolbar.visibility = View.GONE  // 툴바 숨기기
-            drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)   // 스와이프 비활성화
-        }
     }
 
     //이메일 채워져있는지 감지

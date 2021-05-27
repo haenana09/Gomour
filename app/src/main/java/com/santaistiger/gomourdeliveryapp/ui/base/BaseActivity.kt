@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.util.Log
-import android.util.TimeUtils
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -38,7 +37,7 @@ import com.santaistiger.gomourdeliveryapp.data.repository.RepositoryImpl
 import com.santaistiger.gomourdeliveryapp.databinding.ActivityBaseBinding
 import com.santaistiger.gomourdeliveryapp.databinding.DialogInputDeliveryTimeBinding
 import com.santaistiger.gomourdeliveryapp.ui.customview.RoundedAlertDialog
-import com.santaistiger.gomourdeliveryapp.ui.view.OrderRequestFragment
+import com.santaistiger.gomourdeliveryapp.ui.customview.OrderRequestFragment
 import com.santaistiger.gomourdeliveryapp.utils.toDp
 import kotlinx.android.synthetic.main.activity_base.*
 import kotlinx.android.synthetic.main.nav_header.view.*

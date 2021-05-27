@@ -47,8 +47,9 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        // 툴바 숨기기
-        setToolbar()
+        // 툴바 설정
+        (requireActivity() as BaseActivity).setToolbar(
+            requireContext(), false, null, false)
 
         auth = Firebase.auth
         binding = DataBindingUtil.inflate<FragmentLoginBinding>(
@@ -124,15 +125,6 @@ class LoginFragment : Fragment() {
     private fun showToast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
-
-
-    private fun setToolbar() {
-        requireActivity().apply {
-            toolbar.visibility = View.GONE  // 툴바 숨기기
-            drawer_layout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)   // 스와이프 비활성화
-        }
-    }
-
 
     // EditTExt 비어있는지 확인
     private val mTextWatcher: TextWatcher = object : TextWatcher {
