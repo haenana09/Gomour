@@ -43,11 +43,6 @@ class OrderDetailViewModel(orderId: String) : ViewModel() {
         isPickupCompleteBtnClick.value = false
     }
 
-    fun completePickup() {
-        order.value!!.status = Status.PICKUP_COMPLETE
-        updateOrder()
-    }
-
     fun checkCostInput() {
         // 모든 주문 장소의 cost가 입력되지 않으면 오류
         for (store in order.value!!.stores!!) {
@@ -68,6 +63,12 @@ class OrderDetailViewModel(orderId: String) : ViewModel() {
     fun completeDelivery() {
         order.value!!.status = Status.DELIVERY_COMPLETE
         order.value!!.deliveryTime = System.currentTimeMillis()
+        updateOrder()
+    }
+
+    /** 현재 주문의 상태를 '픽업 완료'로 변경 하고, 변경된 주문 정보를 DB 서버에 전달 */
+    fun completePickup() {
+        order.value!!.status = Status.PICKUP_COMPLETE
         updateOrder()
     }
 

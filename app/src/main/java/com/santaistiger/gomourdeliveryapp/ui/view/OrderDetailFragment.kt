@@ -158,7 +158,7 @@ class OrderDetailFragment : Fragment() {
         viewModel.isPickupCompleteBtnClick.observe(viewLifecycleOwner, Observer { clicked ->
             if (clicked) {
                 try {
-                    viewModel.checkCostInput()
+                    viewModel.checkCostInput() // 가격 입력 검사
                     RoundedAlertDialog()
                         .setMessage(resources.getString(R.string.check_pick_up_complete))
                         .setPositiveButton(resources.getString(R.string.ok)) {
@@ -172,7 +172,7 @@ class OrderDetailFragment : Fragment() {
                         .show(requireActivity().supportFragmentManager, "rounded alert dialog")
 
                 } catch (e: NotEnteredException) {
-                    showExceptionDialog(e)
+                    showExceptionDialog(e) // 먼저 가격을 입력하라는 경고창 띄우기
                 } finally {
                     viewModel.donePickupCompleteBtnClick()
                 }
