@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="waitMatchViewModel"
+            type="com.santaistiger.gomourcustomerapp.ui.viewmodel.WaitMatchViewModel" />
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7" />
+
+        <ImageView
+            android:id="@+id/loading_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            app:srcCompat="@raw/wait_match_loading" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:fontFamily="@font/nsregular"
+            android:gravity="center"
+            android:text="@string/matching_wait_match_fragment"
+            android:textColor="@color/black"
+            android:textSize="16dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7" />
+
+        <Button
+            android:id="@+id/cancel_order_button"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="15dp"
+            android:layout_weight="1"
+            android:background="@drawable/shape_bottom_btn"
+            android:fontFamily="@font/nsbold"
+            android:onClick="@{() -> waitMatchViewModel.onCancelClicked()}"
+            android:text="@string/cancel_wait_match_fragment"
+            android:textColor="@color/white"
+            android:textSize="15dp" />
+
+    </LinearLayout>
+
+</layout>

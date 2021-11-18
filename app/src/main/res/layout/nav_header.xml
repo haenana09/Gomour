@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navHeader"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="8dp">
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:paddingHorizontal="7dp"
+        android:paddingTop="30dp"
+        android:paddingBottom="10dp"
+        android:scaleType="fitStart"
+        app:srcCompat="@drawable/profile_image" />
+
+    <TextView
+        android:id="@+id/user_name_string"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nsbold"
+        android:paddingHorizontal="7dp"
+        android:paddingVertical="13dp"
+        android:textColor="@color/black"
+        android:textSize="20dp"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/user_phone_num_string"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nsregular"
+        android:paddingHorizontal="7dp"
+        android:paddingVertical="6dp"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/user_email_string"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/nsregular"
+        android:paddingHorizontal="7dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="18dp"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_gravity="center"
+        android:background="@drawable/dotted_line" />
+
+</LinearLayout>
