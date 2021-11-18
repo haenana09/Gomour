@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="5dp">
+
+        <ImageView
+            android:id="@+id/or_store_img"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:paddingHorizontal="10dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/store"
+            app:tint="@color/main" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="6"
+            android:orientation="vertical"
+            android:paddingVertical="5dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/or_store_address"
+                style="@style/gs_text_regular_14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:paddingTop="5dp"
+                android:textSize="15dp"
+                tools:text="가게 도로명 주소 (가게명)" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/or_menu"
+                style="@style/gs_text_regular_14"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00000000"
+                android:fontFamily="@font/nslight"
+                android:padding="4dp"
+                tools:text="메뉴 메뉴 메뉴 메뉴 메뉴 \n메뉴 메뉴 메뉴 메뉴" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

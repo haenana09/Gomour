@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.santaistiger.gomourdeliveryapp.ui.viewmodel.OrderDetailViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        style="@style/gs_root_container"
+        android:layout_marginTop="0dp">
+
+        <!-- 스크롤 - 지도 / 정보 확인칸 / 연락 버튼 -->
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/container_contact"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- 지도 -->
+                <androidx.cardview.widget.CardView
+                    style="@style/gs_element_card_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    tools:foreground="#55555555">
+
+                    <FrameLayout
+                        android:id="@+id/map_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical" />
+                </androidx.cardview.widget.CardView>
+
+                <!-- 배달 시간 -->
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_marginBottom="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_delivery_time"
+                        style="@style/gs_text_regular_14"
+                        bind_detail_delivery_time="@{viewModel.order}"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="4"
+                        android:textSize="17dp"
+                        tools:text="2021-03-29 (금) 13:24 도착 예정" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <!-- 출발지 및 배달 장소 -->
+                <androidx.appcompat.widget.LinearLayoutCompat style="@style/gs_order_element_container">
+
+                    <!-- 제목 -->
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/gs_title"
+                        android:text="@string/title_address" />
+
+                    <!-- 가게 -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_store"
+                        style="@style/gs_recycler_view"
+                        bind_detail_store_list="@{viewModel.order}" />
+
+                    <!-- 배달 장소 -->
+                    <com.santaistiger.gomourdeliveryapp.ui.customview.DetailDestinationView
+                        android:id="@+id/cv_destination"
+                        bind_detail_destination="@{viewModel.order}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <!-- 배송 메시지 -->
+                <androidx.appcompat.widget.LinearLayoutCompat style="@style/gs_order_element_container">
+
+                    <!-- 제목 -->
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/gs_title"
+                        android:text="@string/title_message" />
+
+                    <!-- 메시지 -->
+                    <com.santaistiger.gomourdeliveryapp.ui.customview.DetailMessageView
+                        android:id="@+id/cv_message"
+                        bind_detail_message="@{viewModel.order}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <!-- 비용 -->
+                <androidx.appcompat.widget.LinearLayoutCompat style="@style/gs_order_element_container">
+
+                    <!-- 제목 -->
+                    <androidx.appcompat.widget.AppCompatTextView
+                        style="@style/gs_title"
+                        android:text="@string/title_price" />
+
+                    <!-- 가격 -->
+                    <com.santaistiger.gomourdeliveryapp.ui.customview.DetailPriceView
+                        android:id="@+id/cv_price"
+                        bind_detail_price="@{viewModel.order}"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- 배달기사에게 전화/문자하기 버튼 -->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/container_contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_call_customer"
+                style="@style/gs_bottom_btn"
+                android:layout_marginBottom="5dp"
+                android:onClick="@{() -> viewModel.onCallBtnClick()}"
+                android:text="@string/call_customer" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_text_customer"
+                style="@style/gs_bottom_btn"
+                android:onClick="@{() -> viewModel.onTextBtnClick()}"
+                android:text="@string/sms_customer" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

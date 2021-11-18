@@ -1,0 +1,88 @@
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="7dp">
+
+            <!-- 주문 시각 -->
+            <TextView
+                android:id="@+id/order_time_string"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nsregular"
+                android:paddingStart="4dp"
+                android:textColor="@color/black"
+                android:textSize="14dp" />
+
+            <Space
+                android:layout_width="15dp"
+                android:layout_height="match_parent" />
+
+            <!-- 배달 상태 -->
+            <TextView
+                android:id="@+id/order_status_string"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/nsregular"
+                android:gravity="start"
+                android:textColor="@color/black"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="5dp"
+            app:cardUseCompatPadding="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="7dp">
+
+                <!-- 가게 -->
+                <LinearLayout
+                    android:id="@+id/stores"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <!-- 도착지 -->
+                <com.santaistiger.gomourdeliveryapp.ui.customview.StoreNameView
+                    android:id="@+id/list_destination"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <!-- 금액 -->
+                <TextView
+                    android:id="@+id/order_price_string"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/nsbold"
+                    android:gravity="end"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="4dp"
+                    android:textColor="@color/black"
+                    android:textSize="13dp" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</layout>

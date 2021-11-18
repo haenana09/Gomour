@@ -1,0 +1,98 @@
+<resources>
+    <string name="app_name">곰아워 기사용</string>
+
+    <!-- 금실쓰 리소스 -->
+    <string name="lock_up_order">주문 조회</string>
+    <string name="ok">확인</string>
+    <string name="cancel">취소</string>
+
+    <string name="warning_input_cost">상품 가격을 입력해주세요</string>
+
+    <string name="call_customer">주문자에게 전화하기</string>
+    <string name="sms_customer">주문자에게 문자하기</string>
+
+    <string name="message_sms_greeting">곰아워 배달 기사입니다.</string>
+
+    <string name="check_sms">주문자에게 문자를 보내시겠습니까?</string>
+    <string name="check_call">주문자에게 전화를 거시겠습니까까?</string>
+    <string name="check_pick_up_complete">픽업을 완료하셨습니까?</string>
+    <string name="check_delivery_complete">배달을 완료하셨습니까?</string>
+
+
+    <string name="message_pick_up_complete">픽업 완료</string>
+    <string name="message_delivery_complete">배달 완료</string>
+
+    <string name="title_address">주문 및 배달 장소</string>
+    <string name="title_message">배송 메시지</string>
+    <string name="title_price">비용</string>
+
+
+
+
+
+    <!-- 주문 목록 화면 관련 resource -->
+    <string name="title_order_list_fragment">주문 목록</string>
+    <string name="empty_order_list_fragment">배달 내역이 없습니다.</string>
+
+    <!-- 네비게이션 드로어 관련 resource -->
+    <string name="get_order_status_navdrawer_menu">주문받기</string>
+    <string name="order_list_navdrawer_menu">주문 목록</string>
+    <string name="modify_user_info_navdrawer_menu">회원 정보 변경</string>
+    <string name="logout_navdrawer_menu">로그아웃</string>
+
+    <!-- 팝업창 관련 resource -->
+    <string name="order_request_title">새로운 요청</string>
+    <string name="order_request_no">거ㅤ절</string>
+    <string name="order_request_yes">수ㅤ락</string>
+
+    <!-- 회원가입 관련 resource -->
+    <string name = "dankook_domain">\@dankook.ac.kr</string>
+    <string name="join_student_id_info">※ 배달원 등록은 단국대학교 학생만 가능합니다.\n학생증을 아래와 같이 찍어 업로드하면 일주일 내로 확인 후 등록 완료 됩니다.</string>
+    <string name = "join_finish_info">학생증 인증을 기다리세요.</string>
+    <string name = "join_email_duplicate_check">중복확인</string>
+    <string name ="join_button">회원가입</string>
+    <string name = "join_email_duplicate_info">이미 사용 중인 이메일입니다.</string>
+    <string name = "join_email_available_info">사용 가능한 이메일입니다.</string>
+    <string name = "join_email_form_info">이메일 형식이 아닙니다.</string>
+    <string name ="join_email_check_info">이메일 중복 검사를 수행하세요.</string>
+    <string name = "join_fail_info">회원가입에 실패하였습니다.</string>
+
+
+    <!-- 회원가입 및 회원정보 관련 resource -->
+    <string name = "password_available_info">사용 가능한 비밀번호입니다.</string>
+    <string name = "password_different_info">비밀번호가 같지 않습니다.</string>
+    <string name = "password_form_info">비밀번호는 대, 소문자, 숫자, 특수문자 포함 8~16자여야 합니다.</string>
+    <string name = "confirm_fail">정보를 다시 입력하세요.</string>
+
+
+    <!-- 회원정보 수정 관련 resource -->
+    <string name = "modify_password_info">비밀번호 변경 시에만 입력하세요.</string>
+    <string name = "withdrwal_button">회    원    탈    퇴</string>
+    <string name = "password_star">********</string>
+
+    <!-- 로딩 화면 관련 resource -->
+    <string name = "app_title">곰아워</string>
+    <string name = "app_version">배달원용</string>
+
+    <!-- 로그인 화면 관련 resource -->
+    <string name="login_student_id_info">아직 학생증 인증이 완료되지 않았습니다.</string>
+    <string name = "login_fail_dialog">로그인에 실패하였습니다.</string>
+    <string name = "login_fail_ok">확인</string>
+
+    <!-- 회원정보 수정 관련 resource -->
+    <string name = "modify_confirm">완료</string>
+    <string name="withdrawal_dialog">정말 탈퇴하시겠습니까?</string>
+    <string name="withdrawal_yes">네</string>
+    <string name ="withdrawal_no">아니오</string>
+    <string name="modify_success">회원정보 변경 성공</string>
+    <string name="modify_fail">회원정보 변경 실패</string>
+    <string name="withdrawal_fail">탈퇴 실패</string>
+    <string name="withdrawal_success">탈퇴 성공</string>
+
+    <!-- 툴바 관련 resource -->
+    <string name="toolbar_title_login">로그인</string>
+    <string name="toolbar_title_join">회원가입</string>
+    <string name="toolbar_title_modify_user_info">회원 정보 변경</string>
+    <string name="toolbar_title_order_detail">주문 조회</string>
+    <string name="toolbar_title_order_list">주문 목록</string>
+</resources>
